@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta property="og:title" content="2027 AI創客無人機冬令營">
+<meta property="og:description" content="1/25–1/29 寒假五日營隊｜Feeby 組裝遙控 × Tello EDU 程式飛行｜每位學員贈送 STEAM 飛行套件">
+<meta property="og:image" content="https://greenmail1011.github.io/camp2027/dm.jpg">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>2027 AI創客無人機冬令營</title>
+<meta name="description" content="2027 寒假五日營隊 1/25–1/29：組裝並遙控 Feeby、以 AI 為 Python 助手程式操控 Tello EDU，每位學員贈送 Feeby STEAM飛行套件。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Chakra+Petch:wght@600;700&display=swap">
+<style>
+/* Layout: one mobile column (max 760px) on a clear winter-sky ground; white cards framed in flight-deck cyan, signal-yellow buttons. Deliberate single light look. */
+:root{
+  --bg:#F3F8FC; --sky:#DDF1F8; --panel:#FFFFFF; --panel-2:#EAF4FA;
+  --text:#10233B; --muted:#4A5D74;
+  --line:#0A7A9A; --line-soft:#A9DCEB;
+  --cta:#FFC928; --cta-hover:#FFD95E; --hot:#C2410C;
+  --wood:#96591B; --wood-fill:#E2AE72; --wood-edge:#9A6431;
+  --border:#CFE3EE; --ink:#10233B;
+  --f-body:"Noto Sans TC",system-ui,-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;
+  --f-num:"Chakra Petch","Noto Sans TC",system-ui,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--bg);color:var(--text);font-family:var(--f-body);font-size:16px;line-height:1.65;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 104px}
+a{color:var(--line)}
+:focus-visible{outline:3px solid var(--line);outline-offset:3px;border-radius:4px}
+.wrap{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:56px}
+h1,h2,h3{margin:0;text-wrap:balance;line-height:1.25}
+p{margin:0;text-wrap:pretty}
+.num{font-family:var(--f-num);font-variant-numeric:tabular-nums}
+.eyebrow{display:flex;align-items:center;gap:10px;color:var(--line);font-weight:700;font-size:14px;letter-spacing:.24em}
+.eyebrow::before,.eyebrow::after{content:"";height:2px;width:32px;background:var(--line)}
+.tbd{display:inline-block;border:1.5px dashed var(--hot);color:var(--hot);border-radius:4px;padding:0 6px;font-weight:700}
+
+/* top bar */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:rgba(255,255,255,.96);border-bottom:1px solid var(--border);
+  margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px)));padding:10px max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:21;background:#FFFFFF}
+.top-in{max-width:760px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{font-weight:900;font-size:15px;letter-spacing:.04em}
+.brand .num{color:var(--line)}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 22px;border-radius:8px;
+  font-weight:900;font-size:17px;letter-spacing:.08em;text-decoration:none;border:2px solid transparent;cursor:pointer}
+.btn-primary{background:var(--cta);color:var(--ink);border-color:#E5AE00}
+.btn-primary:hover{background:var(--cta-hover)}
+.btn-ghost{border-color:var(--line);color:var(--line);background:var(--panel)}
+.btn-ghost:hover{background:var(--panel-2)}
+.btn-sm{min-height:40px;padding:0 14px;font-size:14px}
+
+/* hero */
+.hero{margin-top:20px;padding:28px 18px 30px;border-radius:16px;background:var(--sky);border:1px solid var(--line-soft);
+  display:flex;flex-direction:column;align-items:center;text-align:center;gap:16px}
+.hero h1{font-size:clamp(30px,8vw,52px);font-weight:900;letter-spacing:.02em}
+.hero h1 .num{color:var(--line)}
+.hero .sub{font-size:clamp(17px,4.4vw,22px);font-weight:700}
+.kitpic{margin:0;width:min(100%,300px);aspect-ratio:1;max-width:100%;background:#FFFFFF;border:1px solid var(--line-soft);border-radius:16px;overflow:hidden}
+.kitpic img{display:block;width:100%;height:100%;object-fit:contain}
+.when{font-family:var(--f-num);font-size:clamp(26px,7vw,36px);font-weight:700;color:var(--text);line-height:1.1}
+.when small{font-family:var(--f-body);font-size:.5em;font-weight:700;color:var(--muted);letter-spacing:.08em}
+.gift{display:flex;flex-direction:column;align-items:center;gap:6px}
+.gift .tag{background:var(--cta);color:var(--ink);font-weight:900;letter-spacing:.18em;padding:4px 14px;border-radius:4px;font-size:15px}
+.gift strong{font-size:clamp(26px,7vw,38px);font-weight:900;color:var(--line);line-height:1.2}
+.gift span{color:var(--muted);font-size:15px}
+.facts{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+.chip{border:1px solid var(--line-soft);background:var(--panel);border-radius:999px;padding:6px 14px;font-size:14px;font-weight:500}
+.chip b{color:var(--hot)}
+.hero-cta{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:4px}
+
+/* sections */
+section{display:flex;flex-direction:column;gap:18px}
+.sec-head{display:flex;flex-direction:column;gap:6px}
+.sec-head h2{font-size:clamp(24px,6vw,30px);font-weight:900;letter-spacing:.08em;display:flex;align-items:center;gap:10px}
+.sec-head h2::before{content:"";width:10px;height:26px;border-radius:2px;background:var(--cta);box-shadow:0 0 0 2px #E5AE00 inset}
+.sec-head p{color:var(--muted)}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px}
+
+/* highlights */
+.hl{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.hl article{display:flex;flex-direction:column;gap:8px;border-top:4px solid var(--line)}
+.hl article.w{border-top-color:var(--wood-fill)}
+.hl article.y{border-top-color:var(--cta)}
+.hl .ic{width:48px;height:48px}
+.hl .k{font-family:var(--f-num);font-size:13px;font-weight:700;letter-spacing:.14em;color:var(--muted)}
+.hl h3{font-size:22px;font-weight:900}
+.hl .lead{color:var(--hot);font-weight:700}
+.hl p:last-child{color:var(--muted);font-size:15px}
+
+/* kit */
+.kit{background:var(--panel-2);border-color:var(--line-soft)}
+.kit h3{font-size:24px;font-weight:900;color:var(--line)}
+.kit ul{margin:8px 0 0;padding-left:1.2em;color:var(--muted);display:flex;flex-direction:column;gap:4px}
+
+/* journey */
+.days{list-style:none;margin:0 0 0 22px;padding:0;display:flex;flex-direction:column;border-left:2px solid var(--line-soft)}
+.days li{position:relative;padding:0 0 20px 30px}
+.days li:last-child{padding-bottom:0}
+.days .d{position:absolute;left:-23px;top:0;width:44px;height:44px;border-radius:50%;background:var(--panel);border:2px solid var(--line);color:var(--line);
+  display:flex;align-items:center;justify-content:center;font-family:var(--f-num);font-weight:700;font-size:13px;line-height:1.05;text-align:center}
+.days h3{font-size:18px;font-weight:900;padding-top:10px}
+.days p{color:var(--muted);font-size:15px}
+
+/* simulator */
+.sim{display:grid;grid-template-columns:1fr;gap:14px;background:#10233B;color:#EAF2FF;border:0;border-radius:16px;padding:22px 20px}
+@media (min-width:640px){.sim{grid-template-columns:1fr auto;align-items:center}}
+.sim h2{font-size:clamp(22px,5.4vw,28px);font-weight:900;color:#FFFFFF}
+.sim .tag{font-family:var(--f-num);font-size:13px;font-weight:700;letter-spacing:.18em;color:#5FE0F5}
+.sim p{color:#C9D6E8}
+.sim ul{margin:0;padding-left:1.2em;color:#C9D6E8;display:flex;flex-direction:column;gap:2px}
+.sim .btn{justify-self:start}
+
+/* recap */
+.gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.gallery figure{margin:0;position:relative;border-radius:12px;overflow:hidden;background:var(--panel-2)}
+.gallery figure.wide{grid-column:1 / -1}
+.gallery img{display:block;width:100%;height:100%;object-fit:cover}
+.gallery figure.tall{aspect-ratio:3/4}
+.gallery figcaption{position:absolute;left:8px;bottom:8px;background:rgba(16,35,59,.82);color:#FFFFFF;font-size:13px;font-weight:700;padding:3px 10px;border-radius:999px}
+.privacy{color:var(--muted);font-size:13px}
+.dm-wrap{display:flex;flex-direction:column;align-items:center;gap:10px}
+.dm-wrap a{display:block;width:min(100%,480px)}
+.dm-wrap img{display:block;width:100%;height:auto;border-radius:12px;box-shadow:0 6px 24px rgba(16,35,59,.18)}
+.dm-wrap small{color:var(--muted)}
+
+/* info */
+.info{margin:0;display:grid;grid-template-columns:auto 1fr}
+.info dt,.info dd{margin:0;padding:12px 0;border-bottom:1px solid var(--border)}
+.info dt{color:var(--line);font-weight:700;padding-right:18px;white-space:nowrap}
+.info dd{min-width:0}
+.info dt:last-of-type,.info dd:last-of-type{border-bottom:0}
+
+/* price */
+.price{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.price .panel{display:flex;flex-direction:column;gap:4px}
+.price .lbl{font-weight:700}
+.price .amt{font-family:var(--f-num);font-size:30px;font-weight:700}
+.price small{color:var(--muted);font-size:14px}
+.note{background:#FFF4CC;border:1px solid #E5AE00;color:var(--ink);border-radius:8px;padding:10px 14px;font-weight:700;text-align:center}
+
+/* perks */
+.perks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.perks li{display:flex;gap:10px;align-items:flex-start}
+.perks svg{flex:0 0 22px;margin-top:3px}
+
+/* steps */
+.steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.steps li{display:flex;flex-direction:column;gap:6px}
+.steps .n{font-family:var(--f-num);font-weight:700;color:#FFFFFF;background:var(--line);width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center}
+.steps h3{font-size:18px;font-weight:900}
+.steps p{color:var(--muted);font-size:15px}
+
+/* register */
+.reg{text-align:center;align-items:center;border:2px solid #E5AE00;border-radius:16px;padding:28px 20px;background:#FFF8DD}
+.reg h2{font-size:clamp(24px,6vw,30px);font-weight:900}
+.reg p{color:var(--muted)}
+.reg .pending{color:var(--hot);font-weight:700}
+
+/* faq */
+.faq{display:flex;flex-direction:column;gap:8px}
+.faq details{background:var(--panel);border:1px solid var(--border);border-radius:10px}
+.faq summary{cursor:pointer;padding:14px 16px;font-weight:700;list-style:none;display:flex;justify-content:space-between;gap:12px;min-height:48px;align-items:center}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font-family:var(--f-num);color:var(--line);font-size:22px;line-height:1}
+.faq details[open] summary::after{content:"−"}
+.faq details p{padding:0 16px 14px;color:var(--muted)}
+
+footer{color:var(--muted);font-size:14px;text-align:center;border-top:1px solid var(--border);padding-top:20px}
+
+/* sticky CTA */
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(255,255,255,.97);border-top:1px solid var(--border);box-shadow:0 -4px 16px rgba(16,35,59,.06);
+  padding:10px max(16px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.dock-in{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.dock-in p{flex:1 1 auto;min-width:0;font-size:14px;line-height:1.35;color:var(--muted)}
+.dock-in p b{color:var(--text)}
+.dock .btn{flex:0 0 auto}
+</style>
+</head>
+<body>
+
+
+<header class="top">
+  <div class="top-in">
+    <div class="brand"><span class="num">2027</span> AI創客無人機冬令營</div>
+    <a class="btn btn-primary btn-sm" href="#register">立即報名</a>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero" aria-labelledby="t">
+    <div class="eyebrow">寒假限定・五日營隊</div>
+    <h1 id="t"><span class="num">2027</span> AI創客無人機冬令營</h1>
+    <p class="sub">Feeby 組裝遙控 × Tello&nbsp;EDU 程式飛行</p>
+    <p class="when">1/25<small>(一)</small> ~ 1/29<small>(五)</small></p>
+    <figure class="kitpic"><img src="kit.jpg" alt="Feeby STEAM飛行套件：白色球型保護框無人機，尺寸 125 × 125 mm" width="465" height="464"></figure>
+    <div class="gift">
+      <span class="tag">營隊好禮</span>
+      <strong>每位學員贈送STEAM飛行套件</strong>
+      <span>Feeby 遙控飛行套件：營隊中親手組裝，結營帶回家繼續飛</span>
+    </div>
+    <div class="facts">
+      <span class="chip">國小 <b class="num">3</b> 年級以上・無經驗可</span>
+      <span class="chip">五天共 <b class="num">30</b> 小時</span>
+      <span class="chip">限量 <b class="num">30</b> 名</span>
+    </div>
+    <div class="hero-cta">
+      <a class="btn btn-primary" href="#register">立即報名</a>
+      <a class="btn btn-ghost" href="#info">看活動資訊</a>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-hl">
+    <div class="sec-head">
+      <h2 id="h-hl">三大亮點</h2>
+      <p>動手做、動腦想、動手飛，一次學到完整的無人機創客流程。</p>
+    </div>
+    <div class="hl">
+      <article class="panel w">
+        <svg class="ic" viewBox="0 0 48 48" fill="none" stroke="#96591B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M28 8l12 12-4 4-4-4-14 14 4 4-4 4L6 30l4-4 4 4 14-14-4-4z"/><circle cx="36" cy="36" r="6"/><path d="M36 27v3M36 42v3M27 36h3M42 36h3"/></svg>
+        <span class="k">STEAM</span>
+        <h3>STEAM 組裝</h3>
+        <p class="lead">親手組裝 Feeby 飛行套件</p>
+        <p>認識機架結構、馬達與電路，從一包零件到飛上天。</p>
+      </article>
+      <article class="panel">
+        <svg class="ic" viewBox="0 0 48 48" fill="none" stroke="#0A7A9A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="12" y="12" width="24" height="24" rx="3"/><path d="M18 6v6M24 6v6M30 6v6M18 36v6M24 36v6M30 36v6M6 18h6M6 24h6M6 30h6M36 18h6M36 24h6M36 30h6"/><path d="M18 30l3-12h1l3 12M19 26h5M29 18v12"/></svg>
+        <span class="k">AI</span>
+        <h3>AI 應用</h3>
+        <p class="lead">AI 是你的 Python 程式助手</p>
+        <p>以 AI 為 Python 程式助手，寫程式操控 Tello&nbsp;EDU 完成指定飛行任務。</p>
+      </article>
+      <article class="panel y">
+        <svg class="ic" viewBox="0 0 48 48" fill="none" stroke="#B07D00" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="16" width="22" height="16" rx="8"/><path d="M11 21v6M8 24h6"/><circle cx="20" cy="22" r="1.5"/><circle cx="20" cy="27" r="1.5"/><path d="M34 16l-4 8 4 8M40 16l4 8-4 8"/></svg>
+        <span class="k">RC + CODE</span>
+        <h3>遙控＋程式控制</h3>
+        <p class="lead">模擬＋實機飛行訓練</p>
+        <p>先在無人機足球模擬培訓系統練操控與戰術，再用 Feeby 實機遙控，最後寫 Python 讓 Tello&nbsp;EDU 自動完成任務。</p>
+      </article>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-kit">
+    <div class="panel kit">
+      <div>
+        <h3 id="h-kit">贈品：STEAM飛行套件</h3>
+        <p>每位學員一套 Feeby，營隊中親手組裝，結營後帶回家繼續練習遙控飛行。</p>
+        <ul>
+          <li>球型保護框設計，適合室內安全飛行</li>
+          <li>尺寸約 <span class="num">125 × 125 mm</span>，輕巧好上手</li>
+          <li>組裝過程同步學習力學、電路與動力原理</li>
+          <li>回家也能延續營隊所學，持續練習飛行</li>
+          <li>程式飛行課使用營隊提供的 Tello&nbsp;EDU，不需自備</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-days">
+    <div class="sec-head">
+      <h2 id="h-days">五天學習歷程</h2>
+      <p>由淺入深，從認識無人機到完成自己的程式飛行任務。</p>
+    </div>
+    <ol class="days">
+      <li><span class="d">1/25</span><h3>認識無人機與飛行安全</h3><p>飛行原理、安全規範，用無人機足球模擬培訓系統練習操控。</p></li>
+      <li><span class="d">1/26</span><h3>STEAM 組裝 Feeby</h3><p>機架、馬達、電路一步步組起來。</p></li>
+      <li><span class="d">1/27</span><h3>Feeby 遙控飛行訓練</h3><p>起降、定高、轉向，練出穩定手感。</p></li>
+      <li><span class="d">1/28</span><h3>AI 助手 × Tello&nbsp;EDU 程式飛行</h3><p>以 AI 為 Python 程式助手，寫出程式讓 Tello&nbsp;EDU 完成飛行任務。</p></li>
+      <li><span class="d">1/29</span><h3>任務挑戰與結營</h3><p>遙控＋程式任務挑戰，頒發結營證書。</p></li>
+    </ol>
+  </section>
+
+  <section aria-labelledby="h-sim">
+    <div class="sim">
+      <div style="display:flex;flex-direction:column;gap:8px;min-width:0">
+        <span class="tag">SKY STRIKER</span>
+        <h2 id="h-sim">報名前先試飛：無人機足球模擬培訓系統</h2>
+        <p>營隊使用新竹市無人機創新科技協會的線上模擬培訓系統，先在電腦上練好操控與足球戰術，再上場實機飛行。</p>
+        <ul>
+          <li>飛行訓練：圈圈練習、24 關挑戰、計時競速</li>
+          <li>足球比賽：對戰 AI、線上 1v1～3v3、雙人同機對戰</li>
+          <li>支援鍵盤、遊戲手把與觸控，手機請橫向遊玩</li>
+        </ul>
+      </div>
+      <a class="btn btn-primary" href="https://greenmail1011.github.io/sky-striker/" target="_blank" rel="noopener">開始試玩</a>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-recap">
+    <div class="sec-head">
+      <h2 id="h-recap">精彩營隊回顧</h2>
+      <p><span class="num">2026</span> AI無人機足球夏令營實錄。</p>
+    </div>
+    <div class="gallery">
+      <figure class="wide"><img src="recap_p4.jpg" alt="夏令營學員與教練在無人機足球場前合照" width="1600" height="1200" loading="lazy"><figcaption>結營大合照</figcaption></figure>
+      <figure class="tall"><img src="recap_p2.jpg" alt="學員在教室聆聽課程講解" loading="lazy"><figcaption>課程講解</figcaption></figure>
+      <figure class="tall"><img src="recap_p5.jpg" alt="學員操控球型無人機飛過巧拼塔" loading="lazy"><figcaption>飛行挑戰</figcaption></figure>
+      <figure class="wide"><img src="recap_p1.jpg" alt="學員在教室拿著證書合照" width="1600" height="720" loading="lazy"><figcaption>頒發結營證書</figcaption></figure>
+      <figure class="wide"><img src="recap_p3.jpg" alt="學員在陽明交大校園步道上排隊前進" width="1600" height="722" loading="lazy"><figcaption>交大校園巡禮</figcaption></figure>
+    </div>
+    <p class="privacy">為保護學員隱私，照片中的人臉已以卡通貼紙遮蓋。</p>
+  </section>
+
+  <section aria-labelledby="h-dm">
+    <div class="sec-head"><h2 id="h-dm">營隊 DM</h2></div>
+    <div class="dm-wrap">
+      <a href="dm.jpg" target="_blank" rel="noopener"><img src="dm.jpg" alt="2027 AI創客無人機冬令營 DM：1/25～1/29，三大亮點 STEAM 組裝、AI 應用、遙控＋程式，贈送 STEAM 飛行套件" width="1200" height="1800" loading="lazy"></a>
+      <small>點圖可開啟大圖</small>
+    </div>
+  </section>
+
+  <section id="info" aria-labelledby="h-info">
+    <div class="sec-head"><h2 id="h-info">活動資訊</h2></div>
+    <div class="panel">
+      <dl class="info">
+        <dt>日期</dt><dd><span class="num">2027/1/25</span>（一）～ <span class="num">1/29</span>（五）</dd>
+        <dt>時間</dt><dd><span class="num">09:00–16:00</span>，五天共 <span class="num">30</span> 小時</dd>
+        <dt>地點</dt><dd>陽明交大光復校區 工程三館</dd>
+        <dt>對象</dt><dd>國小 <span class="num">3</span> 年級以上（無經驗可）</dd>
+        <dt>名額</dt><dd>限量 <span class="num">30</span> 名</dd>
+      </dl>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-price">
+    <div class="sec-head"><h2 id="h-price">營隊費用</h2></div>
+    <div class="price">
+      <div class="panel" style="border:2px solid var(--hot)"><span class="lbl">超早鳥</span><span class="amt" style="color:var(--hot)">$8,800</span><small><span class="num">11/30</span> 前報名繳費，折扣 <span class="num">1,000</span> 元</small></div>
+      <div class="panel"><span class="lbl">早鳥</span><span class="amt" style="color:var(--line)">$9,300</span><small><span class="num">12/31</span> 前報名繳費，折扣 <span class="num">500</span> 元</small></div>
+      <div class="panel"><span class="lbl">原價</span><span class="amt">$9,800</span><small><span class="num">2027/1/1</span> 起報名</small></div>
+    </div>
+    <div class="panel" style="display:flex;flex-direction:column;gap:8px">
+      <p style="font-weight:900">身份優惠｜每位折 <span class="num" style="color:var(--hot)">$1,000</span>（擇一，優惠不可重複）</p>
+      <ul style="margin:0;padding-left:1.2em;color:var(--muted);display:flex;flex-direction:column;gap:2px">
+        <li>團報 2 人（含）以上</li>
+        <li>陽明交大教職員子女（需上傳教職員證）</li>
+        <li>未來斑馬程式設計學苑學員</li>
+      </ul>
+    </div>
+    <p class="note">費用含STEAM飛行套件，名額有限，欲報從速！</p>
+  </section>
+
+  <section aria-labelledby="h-perk">
+    <div class="sec-head"><h2 id="h-perk">營隊加值</h2><p>證書・檢定・參賽，累積學習歷程亮點。</p></div>
+    <div class="panel">
+      <ul class="perks">
+        <li><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#0A7A9A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><span>由「新竹市無人機創新科技協會」頒發結營證書</span></li>
+        <li><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#0A7A9A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><span>結營後可報名無人機足球能力認證（初級），通過可取得證書</span></li>
+        <li><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#0A7A9A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><span>表現優秀的學員，可獲專業教練指導參賽機會</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-steps">
+    <div class="sec-head"><h2 id="h-steps">報名流程</h2></div>
+    <ol class="steps">
+      <li class="panel"><span class="n">1</span><h3>匯款繳費</h3><p>匯款帳戶請見報名表，依繳費順序確認名額。</p></li>
+      <li class="panel"><span class="n">2</span><h3>填寫線上報名表</h3><p>選擇報名身份，填寫學員、家長資料與匯款帳號後 5 碼。</p></li>
+      <li class="panel"><span class="n">3</span><h3>加入 LINE 群組</h3><p>營隊通知與行前說明都會在群組公告。</p></li>
+    </ol>
+  </section>
+
+  <section aria-labelledby="h-refund">
+    <div class="sec-head"><h2 id="h-refund">退費辦法</h2></div>
+    <div class="panel">
+      <dl class="info">
+        <dt>開課前 10 日以前</dt><dd>退還全額學費</dd>
+        <dt>開課前 7～9 日</dt><dd>退還 8 成</dd>
+        <dt>開課前 4～6 日</dt><dd>退還 5 成</dd>
+        <dt>開課前 1～3 日</dt><dd>不予退費</dd>
+      </dl>
+      <p style="margin-top:10px;color:var(--muted);font-size:15px">若因颱風或人數不足等不可抗力因素停開（於開課前 1～3 日通知），營隊得停開或延期，學員因此退選者，學費全退。</p>
+    </div>
+  </section>
+
+  <section id="register" class="reg" aria-labelledby="h-reg">
+    <h2 id="h-reg">準備好一起飛了嗎？</h2>
+    <p><span class="num">1/25</span>（一）～ <span class="num">1/29</span>（五）・限量 <span class="num">30</span> 名，依繳費順序確認名額。</p>
+    <a id="reg-link" class="btn btn-primary" href="#register" target="_blank" rel="noopener" hidden>前往報名表</a>
+    <p id="reg-pending" class="pending">報名表即將開放，敬請期待</p>
+  </section>
+
+  <section aria-labelledby="h-faq">
+    <div class="sec-head"><h2 id="h-faq">常見問題</h2></div>
+    <div class="faq">
+      <details><summary>完全沒有無人機經驗可以參加嗎？</summary><p>可以。課程從飛行安全與基本操作開始，國小 3 年級以上、無經驗皆可報名。</p></details>
+      <details><summary>STEAM飛行套件可以帶回家嗎？</summary><p>可以。每位學員在營隊中親手組裝自己的 Feeby，結營後直接帶回家。</p></details>
+      <details><summary>程式課用的無人機需要自己準備嗎？</summary><p>不用。Python 程式飛行課程使用營隊提供的 Tello&nbsp;EDU；帶回家的是遙控用的 Feeby 飛行套件。</p></details>
+      <details><summary>不會打字或寫程式也能上 AI 程式課嗎？</summary><p>可以。學員以 AI 作為 Python 程式助手，由 AI 協助產生與解釋程式，學員從修改數字、調整指令開始，循序漸進完成飛行任務。</p></details>
+      <details><summary>結營有證書嗎？</summary><p>有。由新竹市無人機創新科技協會頒發結營證書，並可再報名無人機足球能力認證（初級）。</p></details>
+    </div>
+  </section>
+
+  <footer>
+    <p>報名諮詢：<span class="num" style="user-select:all">(03)540-3463</span></p>
+    <p>主辦單位：國立陽明交通大學人工智慧專責辦公室、新竹市無人機創新科技協會</p>
+  </footer>
+</main>
+
+<div class="dock" role="region" aria-label="報名">
+  <div class="dock-in">
+    <p><b>1/25～1/29 冬令營</b>・限量 <span class="num">30</span> 名<br>贈STEAM飛行套件</p>
+    <a class="btn btn-primary" href="#register">立即報名</a>
+  </div>
+</div>
+
+<script>
+// 報名表連結：貼上 Google 表單或報名系統網址後即自動啟用按鈕
+const REG_URL = "https://docs.google.com/forms/d/1Pl-W0dfejheaaLPiwcE7hB2VjO5CaDCwFGPHgg-Usoc/viewform";
+(function(){
+  const link = document.getElementById("reg-link");
+  const pending = document.getElementById("reg-pending");
+  if (REG_URL) {
+    link.href = REG_URL;
+    link.hidden = false;
+    pending.hidden = true;
+  }
+})();
+</script>
+
+</body>
+</html>
