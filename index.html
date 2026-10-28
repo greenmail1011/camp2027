@@ -116,6 +116,16 @@ section{display:flex;flex-direction:column;gap:18px}
 .days p{color:var(--muted);font-size:15px}
 .days p b{color:var(--line);font-weight:700;margin-right:4px}
 
+/* tabs */
+.tabs{position:sticky;top:calc(env(safe-area-inset-top,0px) + 61px);z-index:15;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;padding:6px;background:var(--panel);border:1px solid var(--border);border-radius:12px;box-shadow:0 4px 16px rgba(16,35,59,.08);margin-bottom:-24px}
+.tabs button{min-height:44px;border:0;border-radius:8px;background:transparent;color:var(--muted);font:inherit;font-size:15px;font-weight:700;cursor:pointer;padding:0 4px}
+.tabs button[aria-selected="true"]{background:var(--line);color:#FFFFFF}
+.tabs button:hover:not([aria-selected="true"]){background:var(--panel-2);color:var(--text)}
+.tabpanel{display:flex;flex-direction:column;gap:56px;scroll-margin-top:140px}
+.js .tabpanel:not(.active){display:none}
+.next-tab{align-self:center;display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:0 24px;border:2px solid var(--line);border-radius:999px;color:var(--line);font-weight:900;text-decoration:none;background:var(--panel)}
+.next-tab:hover{background:var(--panel-2)}
+
 /* recap */
 .gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .gallery figure{margin:0;position:relative;border-radius:12px;overflow:hidden;background:var(--panel-2)}
@@ -211,171 +221,185 @@ footer{color:var(--muted);font-size:14px;text-align:center;border-top:1px solid 
     </div>
     <div class="hero-cta">
       <a class="btn btn-primary" href="https://docs.google.com/forms/d/1Pl-W0dfejheaaLPiwcE7hB2VjO5CaDCwFGPHgg-Usoc/viewform" target="_blank" rel="noopener">立即報名</a>
-      <a class="btn btn-ghost" href="#info">看活動資訊</a>
+      <a class="btn btn-ghost" href="#signup" data-goto="signup">看費用與報名</a>
     </div>
   </section>
 
-  <section aria-labelledby="h-hl">
-    <div class="sec-head">
-      <h2 id="h-hl">三大亮點</h2>
-      <p>動手做、動腦想、動手飛，一次學到完整的無人機創客流程。</p>
-    </div>
-    <div class="hl">
-      <article class="panel w">
-        <svg class="ic" viewBox="0 0 48 48" fill="none" stroke="#96591B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M28 8l12 12-4 4-4-4-14 14 4 4-4 4L6 30l4-4 4 4 14-14-4-4z"/><circle cx="36" cy="36" r="6"/><path d="M36 27v3M36 42v3M27 36h3M42 36h3"/></svg>
-        <span class="k">STEAM</span>
-        <h3>STEAM 組裝</h3>
-        <p class="lead">親手組裝 STEAM 飛行套件</p>
-        <p>認識機架結構、馬達與電路，從一包零件到飛上天。</p>
-      </article>
-      <article class="panel">
-        <svg class="ic" viewBox="0 0 48 48" fill="none" stroke="#0A7A9A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="12" y="12" width="24" height="24" rx="3"/><path d="M18 6v6M24 6v6M30 6v6M18 36v6M24 36v6M30 36v6M6 18h6M6 24h6M6 30h6M36 18h6M36 24h6M36 30h6"/><path d="M18 30l3-12h1l3 12M19 26h5M29 18v12"/></svg>
-        <span class="k">AI</span>
-        <h3>AI 應用</h3>
-        <p class="lead">AI 是你的 Python 程式助手</p>
-        <p>以 AI 為 Python 程式助手，寫程式操控無人機完成指定飛行任務。</p>
-      </article>
-      <article class="panel y">
-        <svg class="ic" viewBox="0 0 48 48" fill="none" stroke="#B07D00" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="16" width="22" height="16" rx="8"/><path d="M11 21v6M8 24h6"/><circle cx="20" cy="22" r="1.5"/><circle cx="20" cy="27" r="1.5"/><path d="M34 16l-4 8 4 8M40 16l4 8-4 8"/></svg>
-        <span class="k">RC + CODE</span>
-        <h3>遙控＋程式控制</h3>
-        <p class="lead">模擬＋實機飛行訓練</p>
-        <p>先在無人機足球模擬培訓系統練操控與戰術，再用飛行套件實機遙控，最後寫 Python 讓程式教學無人機自動完成任務。</p>
-      </article>
-    </div>
-  </section>
+  <nav class="tabs" role="tablist" aria-label="營隊資訊分頁">
+    <button type="button" role="tab" id="tab-course" aria-controls="panel-course" aria-selected="true" data-tab="course">課程內容</button>
+    <button type="button" role="tab" id="tab-recap" aria-controls="panel-recap" aria-selected="false" data-tab="recap">營隊回顧</button>
+    <button type="button" role="tab" id="tab-signup" aria-controls="panel-signup" aria-selected="false" data-tab="signup">費用報名</button>
+    <button type="button" role="tab" id="tab-faq" aria-controls="panel-faq" aria-selected="false" data-tab="faq">常見問題</button>
+  </nav>
+  <div class="tabpanel" id="panel-course" role="tabpanel" aria-labelledby="tab-course">
+    <section aria-labelledby="h-hl">
+      <div class="sec-head">
+        <h2 id="h-hl">三大亮點</h2>
+        <p>動手做、動腦想、動手飛，一次學到完整的無人機創客流程。</p>
+      </div>
+      <div class="hl">
+        <article class="panel w">
+          <svg class="ic" viewBox="0 0 48 48" fill="none" stroke="#96591B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M28 8l12 12-4 4-4-4-14 14 4 4-4 4L6 30l4-4 4 4 14-14-4-4z"/><circle cx="36" cy="36" r="6"/><path d="M36 27v3M36 42v3M27 36h3M42 36h3"/></svg>
+          <span class="k">STEAM</span>
+          <h3>STEAM 組裝</h3>
+          <p class="lead">親手組裝 STEAM 飛行套件</p>
+          <p>認識機架結構、馬達與電路，從一包零件到飛上天。</p>
+        </article>
+        <article class="panel">
+          <svg class="ic" viewBox="0 0 48 48" fill="none" stroke="#0A7A9A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="12" y="12" width="24" height="24" rx="3"/><path d="M18 6v6M24 6v6M30 6v6M18 36v6M24 36v6M30 36v6M6 18h6M6 24h6M6 30h6M36 18h6M36 24h6M36 30h6"/><path d="M18 30l3-12h1l3 12M19 26h5M29 18v12"/></svg>
+          <span class="k">AI</span>
+          <h3>AI 應用</h3>
+          <p class="lead">AI 是你的 Python 程式助手</p>
+          <p>以 AI 為 Python 程式助手，寫程式操控無人機完成指定飛行任務。</p>
+        </article>
+        <article class="panel y">
+          <svg class="ic" viewBox="0 0 48 48" fill="none" stroke="#B07D00" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="16" width="22" height="16" rx="8"/><path d="M11 21v6M8 24h6"/><circle cx="20" cy="22" r="1.5"/><circle cx="20" cy="27" r="1.5"/><path d="M34 16l-4 8 4 8M40 16l4 8-4 8"/></svg>
+          <span class="k">RC + CODE</span>
+          <h3>遙控＋程式控制</h3>
+          <p class="lead">模擬＋實機飛行訓練</p>
+          <p>先在無人機足球模擬培訓系統練操控與戰術，再用飛行套件實機遙控，最後寫 Python 讓程式教學無人機自動完成任務。</p>
+        </article>
+      </div>
+    </section>
 
-  <section aria-labelledby="h-kit">
-    <div class="panel kit">
-      <figure class="kitpic"><img src="kit.jpg" alt="STEAM飛行套件：白色球型保護框無人機，尺寸 125 × 125 mm" width="465" height="464" loading="lazy"></figure>
-      <div>
-        <h3 id="h-kit">贈品：STEAM飛行套件</h3>
-        <p>每位學員一套，營隊中親手組裝，結營後帶回家繼續練習遙控飛行。</p>
-        <ul>
-          <li>球型保護框設計，適合室內安全飛行</li>
-          <li>尺寸約 <span class="num">125 × 125 mm</span>，輕巧好上手</li>
-          <li>組裝過程同步學習力學、電路與動力原理</li>
+    <section aria-labelledby="h-kit">
+      <div class="panel kit">
+        <figure class="kitpic"><img src="kit.jpg" alt="STEAM飛行套件：白色球型保護框無人機，尺寸 125 × 125 mm" width="465" height="464" loading="lazy"></figure>
+        <div>
+          <h3 id="h-kit">贈品：STEAM飛行套件</h3>
+          <p>每位學員一套，營隊中親手組裝，結營後帶回家繼續練習遙控飛行。</p>
+          <ul>
+            <li>球型保護框設計，適合室內安全飛行</li>
+            <li>尺寸約 <span class="num">125 × 125 mm</span>，輕巧好上手</li>
+            <li>組裝過程同步學習力學、電路與動力原理</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="h-days">
+      <div class="sec-head">
+        <h2 id="h-days">五天學習歷程</h2>
+        <p>由淺入深，從認識無人機到完成自己的程式飛行任務。</p>
+      </div>
+      <ol class="days">
+        <li><span class="d">1/25</span><h3>認識無人機・模擬飛行初體驗</h3><p><b>上午</b> 認識無人機構造、飛行原理與安全操作觀念<br><b>下午</b> 用無人機足球模擬培訓系統練習起降、定點與方向移動</p></li>
+        <li><span class="d">1/26</span><h3>STEAM 組裝・實機遙控飛行</h3><p><b>上午</b> 親手組裝飛行套件：機架結構、馬達動力與電路連接<br><b>下午</b> 試飛調校，練習定高懸停與障礙飛行</p></li>
+        <li><span class="d">1/27</span><h3>AI × Python・程式飛行任務</h3><p><b>上午</b> 以 AI 為程式助手，學會讀懂、修改飛行程式<br><b>下午</b> 寫程式讓無人機自動降落停機坪、穿越圈圈、繞柱飛行</p></li>
+        <li class="arena"><span class="d">1/28</span><h3>國際競技場實戰（一）</h3><p><b>上午</b> 國際足球無人機練習賽：賽制規則、角色分工、分隊熱身<br><b>下午</b> 國際競技場實戰初賽：分組積分、攻守戰術</p></li>
+        <li class="arena"><span class="d">1/29</span><h3>國際競技場實戰（二）・結營</h3><p><b>上午</b> 團體障礙接力賽：考驗操控精準度與團隊默契<br><b>下午</b> 國際競技場實戰決賽、成果計分，頒發結營證書</p></li>
+      </ol>
+      <p class="privacy">每日 <span class="num">09:00–16:00</span> 上課，<span class="num">16:00–16:30</span> 家長接送。</p>
+    </section>
+    <a class="next-tab" href="#recap" data-goto="recap">下一頁：營隊回顧 <span aria-hidden="true">→</span></a>
+  </div>
+  <div class="tabpanel" id="panel-recap" role="tabpanel" aria-labelledby="tab-recap">
+    <section aria-labelledby="h-recap">
+      <div class="sec-head">
+        <h2 id="h-recap">精彩營隊回顧</h2>
+        <p><span class="num">2026</span> AI無人機足球夏令營實錄。</p>
+      </div>
+      <div class="gallery">
+        <figure class="wide"><img src="recap_p4.jpg" alt="夏令營學員與教練在無人機足球場前合照" width="1600" height="1200" loading="lazy"><figcaption>結營大合照</figcaption></figure>
+        <figure class="tall"><img src="recap_p2.jpg" alt="學員在教室聆聽課程講解" loading="lazy"><figcaption>課程講解</figcaption></figure>
+        <figure class="tall"><img src="recap_p5.jpg" alt="學員操控球型無人機飛過巧拼塔" loading="lazy"><figcaption>飛行挑戰</figcaption></figure>
+        <figure class="wide"><img src="recap_p1.jpg" alt="學員在教室拿著證書合照" width="1600" height="720" loading="lazy"><figcaption>頒發結營證書</figcaption></figure>
+        <figure class="wide"><img src="recap_p3.jpg" alt="學員在陽明交大校園步道上排隊前進" width="1600" height="722" loading="lazy"><figcaption>交大校園巡禮</figcaption></figure>
+      </div>
+      <p class="privacy">為保護學員隱私，照片中的人臉已以卡通貼紙遮蓋。</p>
+    </section>
+
+    <section aria-labelledby="h-dm">
+      <div class="sec-head"><h2 id="h-dm">營隊 DM</h2></div>
+      <div class="dm-wrap">
+        <a href="dm.jpg" target="_blank" rel="noopener"><img src="dm.jpg" alt="2027 AI創客無人機冬令營 DM：1/25～1/29，三大亮點 STEAM 組裝、AI 應用、遙控＋程式，贈送 STEAM 飛行套件" width="1200" height="1800" loading="lazy"></a>
+        <small>點圖可開啟大圖</small>
+      </div>
+    </section>
+    <a class="next-tab" href="#signup" data-goto="signup">下一頁：費用報名 <span aria-hidden="true">→</span></a>
+  </div>
+  <div class="tabpanel" id="panel-signup" role="tabpanel" aria-labelledby="tab-signup">
+    <section id="info" aria-labelledby="h-info">
+      <div class="sec-head"><h2 id="h-info">活動資訊</h2></div>
+      <div class="panel">
+        <dl class="info">
+          <dt>日期</dt><dd><span class="num">2027/1/25</span>（一）～ <span class="num">1/29</span>（五）</dd>
+          <dt>時間</dt><dd><span class="num">09:00–16:00</span>，五天共 <span class="num">30</span> 小時</dd>
+          <dt>地點</dt><dd>陽明交大光復校區 工程三館</dd>
+          <dt>對象</dt><dd>國小 <span class="num">3</span> 年級以上（無經驗可）</dd>
+          <dt>名額</dt><dd>限量 <span class="num">30</span> 名</dd>
+        </dl>
+      </div>
+    </section>
+
+    <section aria-labelledby="h-price">
+      <div class="sec-head"><h2 id="h-price">營隊費用</h2></div>
+      <div class="price">
+        <div class="panel" style="border:2px solid var(--hot)"><span class="lbl">超早鳥</span><span class="amt" style="color:var(--hot)">$8,800</span><small><span class="num">11/30</span> 前報名繳費，折扣 <span class="num">1,000</span> 元</small></div>
+        <div class="panel"><span class="lbl">早鳥</span><span class="amt" style="color:var(--line)">$9,300</span><small><span class="num">12/31</span> 前報名繳費，折扣 <span class="num">500</span> 元</small></div>
+        <div class="panel"><span class="lbl">原價</span><span class="amt">$9,800</span><small><span class="num">2027/1/1</span> 起報名</small></div>
+      </div>
+      <div class="panel" style="display:flex;flex-direction:column;gap:8px">
+        <p style="font-weight:900">身份優惠｜每位折 <span class="num" style="color:var(--hot)">$1,000</span>（擇一，優惠不可重複）</p>
+        <ul style="margin:0;padding-left:1.2em;color:var(--muted);display:flex;flex-direction:column;gap:2px">
+          <li>團報 2 人（含）以上</li>
+          <li>陽明交大教職員子女（需上傳教職員證）</li>
+          <li>未來斑馬程式設計學苑學員</li>
         </ul>
       </div>
-    </div>
-  </section>
+      <p class="note">費用含STEAM飛行套件，名額有限，欲報從速！</p>
+    </section>
 
-  <section aria-labelledby="h-days">
-    <div class="sec-head">
-      <h2 id="h-days">五天學習歷程</h2>
-      <p>由淺入深，從認識無人機到完成自己的程式飛行任務。</p>
-    </div>
-    <ol class="days">
-      <li><span class="d">1/25</span><h3>認識無人機・模擬飛行初體驗</h3><p><b>上午</b> 認識無人機構造、飛行原理與安全操作觀念<br><b>下午</b> 用無人機足球模擬培訓系統練習起降、定點與方向移動</p></li>
-      <li><span class="d">1/26</span><h3>STEAM 組裝・實機遙控飛行</h3><p><b>上午</b> 親手組裝飛行套件：機架結構、馬達動力與電路連接<br><b>下午</b> 試飛調校，練習定高懸停與障礙飛行</p></li>
-      <li><span class="d">1/27</span><h3>AI × Python・程式飛行任務</h3><p><b>上午</b> 以 AI 為程式助手，學會讀懂、修改飛行程式<br><b>下午</b> 寫程式讓無人機自動降落停機坪、穿越圈圈、繞柱飛行</p></li>
-      <li class="arena"><span class="d">1/28</span><h3>國際競技場實戰（一）</h3><p><b>上午</b> 國際足球無人機練習賽：賽制規則、角色分工、分隊熱身<br><b>下午</b> 國際競技場實戰初賽：分組積分、攻守戰術</p></li>
-      <li class="arena"><span class="d">1/29</span><h3>國際競技場實戰（二）・結營</h3><p><b>上午</b> 團體障礙接力賽：考驗操控精準度與團隊默契<br><b>下午</b> 國際競技場實戰決賽、成果計分，頒發結營證書</p></li>
-    </ol>
-    <p class="privacy">每日 <span class="num">09:00–16:00</span> 上課，<span class="num">16:00–16:30</span> 家長接送。</p>
-  </section>
+    <section aria-labelledby="h-perk">
+      <div class="sec-head"><h2 id="h-perk">營隊加值</h2><p>證書・檢定・參賽，累積學習歷程亮點。</p></div>
+      <div class="panel">
+        <ul class="perks">
+          <li><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#0A7A9A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><span>由「新竹市無人機創新科技協會」頒發結營證書</span></li>
+          <li><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#0A7A9A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><span>結營後可報名無人機足球能力認證（初級），通過可取得證書</span></li>
+          <li><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#0A7A9A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><span>表現優秀的學員，可獲專業教練指導參賽機會</span></li>
+        </ul>
+      </div>
+    </section>
 
-  <section aria-labelledby="h-recap">
-    <div class="sec-head">
-      <h2 id="h-recap">精彩營隊回顧</h2>
-      <p><span class="num">2026</span> AI無人機足球夏令營實錄。</p>
-    </div>
-    <div class="gallery">
-      <figure class="wide"><img src="recap_p4.jpg" alt="夏令營學員與教練在無人機足球場前合照" width="1600" height="1200" loading="lazy"><figcaption>結營大合照</figcaption></figure>
-      <figure class="tall"><img src="recap_p2.jpg" alt="學員在教室聆聽課程講解" loading="lazy"><figcaption>課程講解</figcaption></figure>
-      <figure class="tall"><img src="recap_p5.jpg" alt="學員操控球型無人機飛過巧拼塔" loading="lazy"><figcaption>飛行挑戰</figcaption></figure>
-      <figure class="wide"><img src="recap_p1.jpg" alt="學員在教室拿著證書合照" width="1600" height="720" loading="lazy"><figcaption>頒發結營證書</figcaption></figure>
-      <figure class="wide"><img src="recap_p3.jpg" alt="學員在陽明交大校園步道上排隊前進" width="1600" height="722" loading="lazy"><figcaption>交大校園巡禮</figcaption></figure>
-    </div>
-    <p class="privacy">為保護學員隱私，照片中的人臉已以卡通貼紙遮蓋。</p>
-  </section>
+    <section aria-labelledby="h-steps">
+      <div class="sec-head"><h2 id="h-steps">報名流程</h2></div>
+      <ol class="steps">
+        <li class="panel"><span class="n">1</span><h3>填寫線上報名表</h3><p>選擇報名身份，填寫學員與家長資料。</p></li>
+        <li class="panel"><span class="n">2</span><h3>匯款繳費</h3><p>依報名表中的帳戶匯款，並填寫匯款帳號後 5 碼；依繳費順序確認名額。</p></li>
+        <li class="panel"><span class="n">3</span><h3>加入 LINE 群組</h3><p>報名表最後附有群組連結，營隊通知與行前說明都在群組公告。</p></li>
+      </ol>
+    </section>
 
-  <section aria-labelledby="h-dm">
-    <div class="sec-head"><h2 id="h-dm">營隊 DM</h2></div>
-    <div class="dm-wrap">
-      <a href="dm.jpg" target="_blank" rel="noopener"><img src="dm.jpg" alt="2027 AI創客無人機冬令營 DM：1/25～1/29，三大亮點 STEAM 組裝、AI 應用、遙控＋程式，贈送 STEAM 飛行套件" width="1200" height="1800" loading="lazy"></a>
-      <small>點圖可開啟大圖</small>
-    </div>
-  </section>
+    <section aria-labelledby="h-refund">
+      <div class="sec-head"><h2 id="h-refund">退費辦法</h2></div>
+      <div class="panel">
+        <dl class="info">
+          <dt>開課前 10 日以前</dt><dd>退還全額學費</dd>
+          <dt>開課前 7～9 日</dt><dd>退還 8 成</dd>
+          <dt>開課前 4～6 日</dt><dd>退還 5 成</dd>
+          <dt>開課前 1～3 日</dt><dd>不予退費</dd>
+        </dl>
+        <p style="margin-top:10px;color:var(--muted);font-size:15px">若因颱風或人數不足等不可抗力因素停開（於開課前 1～3 日通知），營隊得停開或延期，學員因此退選者，學費全退。</p>
+      </div>
+    </section>
 
-  <section id="info" aria-labelledby="h-info">
-    <div class="sec-head"><h2 id="h-info">活動資訊</h2></div>
-    <div class="panel">
-      <dl class="info">
-        <dt>日期</dt><dd><span class="num">2027/1/25</span>（一）～ <span class="num">1/29</span>（五）</dd>
-        <dt>時間</dt><dd><span class="num">09:00–16:00</span>，五天共 <span class="num">30</span> 小時</dd>
-        <dt>地點</dt><dd>陽明交大光復校區 工程三館</dd>
-        <dt>對象</dt><dd>國小 <span class="num">3</span> 年級以上（無經驗可）</dd>
-        <dt>名額</dt><dd>限量 <span class="num">30</span> 名</dd>
-      </dl>
-    </div>
-  </section>
-
-  <section aria-labelledby="h-price">
-    <div class="sec-head"><h2 id="h-price">營隊費用</h2></div>
-    <div class="price">
-      <div class="panel" style="border:2px solid var(--hot)"><span class="lbl">超早鳥</span><span class="amt" style="color:var(--hot)">$8,800</span><small><span class="num">11/30</span> 前報名繳費，折扣 <span class="num">1,000</span> 元</small></div>
-      <div class="panel"><span class="lbl">早鳥</span><span class="amt" style="color:var(--line)">$9,300</span><small><span class="num">12/31</span> 前報名繳費，折扣 <span class="num">500</span> 元</small></div>
-      <div class="panel"><span class="lbl">原價</span><span class="amt">$9,800</span><small><span class="num">2027/1/1</span> 起報名</small></div>
-    </div>
-    <div class="panel" style="display:flex;flex-direction:column;gap:8px">
-      <p style="font-weight:900">身份優惠｜每位折 <span class="num" style="color:var(--hot)">$1,000</span>（擇一，優惠不可重複）</p>
-      <ul style="margin:0;padding-left:1.2em;color:var(--muted);display:flex;flex-direction:column;gap:2px">
-        <li>團報 2 人（含）以上</li>
-        <li>陽明交大教職員子女（需上傳教職員證）</li>
-        <li>未來斑馬程式設計學苑學員</li>
-      </ul>
-    </div>
-    <p class="note">費用含STEAM飛行套件，名額有限，欲報從速！</p>
-  </section>
-
-  <section aria-labelledby="h-perk">
-    <div class="sec-head"><h2 id="h-perk">營隊加值</h2><p>證書・檢定・參賽，累積學習歷程亮點。</p></div>
-    <div class="panel">
-      <ul class="perks">
-        <li><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#0A7A9A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><span>由「新竹市無人機創新科技協會」頒發結營證書</span></li>
-        <li><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#0A7A9A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><span>結營後可報名無人機足球能力認證（初級），通過可取得證書</span></li>
-        <li><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#0A7A9A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><span>表現優秀的學員，可獲專業教練指導參賽機會</span></li>
-      </ul>
-    </div>
-  </section>
-
-  <section aria-labelledby="h-steps">
-    <div class="sec-head"><h2 id="h-steps">報名流程</h2></div>
-    <ol class="steps">
-      <li class="panel"><span class="n">1</span><h3>填寫線上報名表</h3><p>選擇報名身份，填寫學員與家長資料。</p></li>
-      <li class="panel"><span class="n">2</span><h3>匯款繳費</h3><p>依報名表中的帳戶匯款，並填寫匯款帳號後 5 碼；依繳費順序確認名額。</p></li>
-      <li class="panel"><span class="n">3</span><h3>加入 LINE 群組</h3><p>報名表最後附有群組連結，營隊通知與行前說明都在群組公告。</p></li>
-    </ol>
-  </section>
-
-  <section aria-labelledby="h-refund">
-    <div class="sec-head"><h2 id="h-refund">退費辦法</h2></div>
-    <div class="panel">
-      <dl class="info">
-        <dt>開課前 10 日以前</dt><dd>退還全額學費</dd>
-        <dt>開課前 7～9 日</dt><dd>退還 8 成</dd>
-        <dt>開課前 4～6 日</dt><dd>退還 5 成</dd>
-        <dt>開課前 1～3 日</dt><dd>不予退費</dd>
-      </dl>
-      <p style="margin-top:10px;color:var(--muted);font-size:15px">若因颱風或人數不足等不可抗力因素停開（於開課前 1～3 日通知），營隊得停開或延期，學員因此退選者，學費全退。</p>
-    </div>
-  </section>
-
-  <section id="register" class="reg" aria-labelledby="h-reg">
-    <h2 id="h-reg">準備好一起飛了嗎？</h2>
-    <p>限量 <span class="num">30</span> 名，額滿為止。</p>
-    <a class="btn btn-primary" href="https://docs.google.com/forms/d/1Pl-W0dfejheaaLPiwcE7hB2VjO5CaDCwFGPHgg-Usoc/viewform" target="_blank" rel="noopener">前往報名表</a>
-  </section>
-
-  <section aria-labelledby="h-faq">
-    <div class="sec-head"><h2 id="h-faq">常見問題</h2></div>
-    <div class="faq">
-      <details><summary>完全沒有無人機經驗可以參加嗎？</summary><p>可以。課程從飛行安全與基本操作開始，國小 3 年級以上、無經驗皆可報名。</p></details>
-      <details><summary>程式課用的無人機需要自己準備嗎？</summary><p>不用。Python 程式飛行課程使用營隊提供的程式教學無人機；帶回家的是遙控用的 STEAM 飛行套件。</p></details>
-      <details><summary>打字很慢或沒寫過程式，也能上 AI 程式課嗎？</summary><p>可以。學員以 AI 作為 Python 程式助手，由 AI 協助產生與解釋程式，學員從修改數字、調整指令開始，循序漸進完成飛行任務。</p></details>
-    </div>
-  </section>
+    <section id="register" class="reg" aria-labelledby="h-reg">
+      <h2 id="h-reg">準備好一起飛了嗎？</h2>
+      <p>限量 <span class="num">30</span> 名，額滿為止。</p>
+      <a class="btn btn-primary" href="https://docs.google.com/forms/d/1Pl-W0dfejheaaLPiwcE7hB2VjO5CaDCwFGPHgg-Usoc/viewform" target="_blank" rel="noopener">前往報名表</a>
+    </section>
+    <a class="next-tab" href="#faq" data-goto="faq">下一頁：常見問題 <span aria-hidden="true">→</span></a>
+  </div>
+  <div class="tabpanel" id="panel-faq" role="tabpanel" aria-labelledby="tab-faq">
+    <section aria-labelledby="h-faq">
+      <div class="sec-head"><h2 id="h-faq">常見問題</h2></div>
+      <div class="faq">
+        <details><summary>完全沒有無人機經驗可以參加嗎？</summary><p>可以。課程從飛行安全與基本操作開始，國小 3 年級以上、無經驗皆可報名。</p></details>
+        <details><summary>程式課用的無人機需要自己準備嗎？</summary><p>不用。Python 程式飛行課程使用營隊提供的程式教學無人機；帶回家的是遙控用的 STEAM 飛行套件。</p></details>
+        <details><summary>打字很慢或沒寫過程式，也能上 AI 程式課嗎？</summary><p>可以。學員以 AI 作為 Python 程式助手，由 AI 協助產生與解釋程式，學員從修改數字、調整指令開始，循序漸進完成飛行任務。</p></details>
+      </div>
+    </section>
+  </div>
 
   <footer>
     <p>報名諮詢：<span class="num" style="user-select:all">(03)540-3463</span></p>
@@ -389,8 +413,32 @@ footer{color:var(--muted);font-size:14px;text-align:center;border-top:1px solid 
     <a class="btn btn-primary" href="https://docs.google.com/forms/d/1Pl-W0dfejheaaLPiwcE7hB2VjO5CaDCwFGPHgg-Usoc/viewform" target="_blank" rel="noopener">立即報名</a>
   </div>
 </div>
-
-
+<script>
+(function(){
+  var ids=["course","recap","signup","faq"];
+  document.documentElement.classList.add("js");
+  var tabs=document.querySelectorAll('.tabs [role="tab"]');
+  function show(id,scroll){
+    if(ids.indexOf(id)<0) id="course";
+    tabs.forEach(function(t){var on=t.dataset.tab===id;t.setAttribute("aria-selected",on?"true":"false");t.tabIndex=on?0:-1;});
+    ids.forEach(function(k){var p=document.getElementById("panel-"+k);if(p)p.classList.toggle("active",k===id);});
+    if(scroll){var pn=document.getElementById("panel-"+id);var bar=document.querySelector(".tabs");var y=pn.getBoundingClientRect().top+window.scrollY-(61+bar.offsetHeight+16);window.scrollTo({top:Math.max(0,y),behavior:"smooth"});}
+  }
+  tabs.forEach(function(t){
+    t.addEventListener("click",function(){show(t.dataset.tab,true);try{history.replaceState(null,"","#"+t.dataset.tab);}catch(e){}});
+    t.addEventListener("keydown",function(e){
+      var i=ids.indexOf(t.dataset.tab);
+      if(e.key==="ArrowRight"||e.key==="ArrowLeft"){e.preventDefault();var n=ids[(i+(e.key==="ArrowRight"?1:3))%4];show(n,false);document.getElementById("tab-"+n).focus();}
+    });
+  });
+  document.querySelectorAll("[data-goto]").forEach(function(a){
+    a.addEventListener("click",function(e){e.preventDefault();var id=a.dataset.goto;show(id,true);try{history.replaceState(null,"","#"+id);}catch(err){}});
+  });
+  var h=(location.hash||"").slice(1);
+  show(ids.indexOf(h)>=0?h:"course",ids.indexOf(h)>=0);
+  window.addEventListener("hashchange",function(){var k=location.hash.slice(1);if(ids.indexOf(k)>=0)show(k,true);});
+})();
+</script>
 
 </body>
 </html>
