@@ -116,15 +116,6 @@ section{display:flex;flex-direction:column;gap:18px}
 .days p{color:var(--muted);font-size:15px}
 .days p b{color:var(--line);font-weight:700;margin-right:4px}
 
-/* simulator */
-.sim{display:grid;grid-template-columns:1fr;gap:14px;background:#10233B;color:#EAF2FF;border:0;border-radius:16px;padding:22px 20px}
-@media (min-width:640px){.sim{grid-template-columns:1fr auto;align-items:center}}
-.sim h2{font-size:clamp(22px,5.4vw,28px);font-weight:900;color:#FFFFFF}
-.sim .tag{font-family:var(--f-num);font-size:13px;font-weight:700;letter-spacing:.18em;color:#5FE0F5}
-.sim p{color:#C9D6E8}
-.sim ul{margin:0;padding-left:1.2em;color:#C9D6E8;display:flex;flex-direction:column;gap:2px}
-.sim .btn{justify-self:start}
-
 /* recap */
 .gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .gallery figure{margin:0;position:relative;border-radius:12px;overflow:hidden;background:var(--panel-2)}
@@ -197,7 +188,7 @@ footer{color:var(--muted);font-size:14px;text-align:center;border-top:1px solid 
 <header class="top">
   <div class="top-in">
     <div class="brand"><span class="num">2027</span> AI創客無人機冬令營</div>
-    <a class="btn btn-primary btn-sm" href="#register">立即報名</a>
+    <a class="btn btn-primary btn-sm" href="https://docs.google.com/forms/d/1Pl-W0dfejheaaLPiwcE7hB2VjO5CaDCwFGPHgg-Usoc/viewform" target="_blank" rel="noopener">立即報名</a>
   </div>
 </header>
 
@@ -220,7 +211,7 @@ footer{color:var(--muted);font-size:14px;text-align:center;border-top:1px solid 
       <span class="chip">最後兩天・<b>國際競技場實戰</b></span>
     </div>
     <div class="hero-cta">
-      <a class="btn btn-primary" href="#register">立即報名</a>
+      <a class="btn btn-primary" href="https://docs.google.com/forms/d/1Pl-W0dfejheaaLPiwcE7hB2VjO5CaDCwFGPHgg-Usoc/viewform" target="_blank" rel="noopener">立即報名</a>
       <a class="btn btn-ghost" href="#info">看活動資訊</a>
     </div>
   </section>
@@ -285,22 +276,6 @@ footer{color:var(--muted);font-size:14px;text-align:center;border-top:1px solid 
       <li class="arena"><span class="d">1/29</span><h3>國際競技場實戰（二）・結營</h3><p><b>上午</b> 團體障礙接力賽：考驗操控精準度與團隊默契<br><b>下午</b> 國際競技場實戰決賽、成果計分，頒發結營證書</p></li>
     </ol>
     <p class="privacy">每日 <span class="num">09:00–16:00</span> 上課，<span class="num">16:00–16:30</span> 家長接送。</p>
-  </section>
-
-  <section aria-labelledby="h-sim">
-    <div class="sim">
-      <div style="display:flex;flex-direction:column;gap:8px;min-width:0">
-        <span class="tag">SKY STRIKER</span>
-        <h2 id="h-sim">報名前先試飛：無人機足球模擬培訓系統</h2>
-        <p>營隊使用新竹市無人機創新科技協會的線上模擬培訓系統，先在電腦上練好操控與足球戰術，再上場實機飛行。</p>
-        <ul>
-          <li>飛行訓練：圈圈練習、24 關挑戰、計時競速</li>
-          <li>足球比賽：對戰 AI、線上 1v1～3v3、雙人同機對戰</li>
-          <li>支援鍵盤、遊戲手把與觸控，手機請橫向遊玩</li>
-        </ul>
-      </div>
-      <a class="btn btn-primary" href="https://greenmail1011.github.io/sky-striker/" target="_blank" rel="noopener">開始試玩</a>
-    </div>
   </section>
 
   <section aria-labelledby="h-recap">
@@ -394,8 +369,7 @@ footer{color:var(--muted);font-size:14px;text-align:center;border-top:1px solid 
   <section id="register" class="reg" aria-labelledby="h-reg">
     <h2 id="h-reg">準備好一起飛了嗎？</h2>
     <p><span class="num">1/25</span>（一）～ <span class="num">1/29</span>（五）・限量 <span class="num">30</span> 名，依繳費順序確認名額。</p>
-    <a id="reg-link" class="btn btn-primary" href="#register" target="_blank" rel="noopener" hidden>前往報名表</a>
-    <p id="reg-pending" class="pending">報名表即將開放，敬請期待</p>
+    <a class="btn btn-primary" href="https://docs.google.com/forms/d/1Pl-W0dfejheaaLPiwcE7hB2VjO5CaDCwFGPHgg-Usoc/viewform" target="_blank" rel="noopener">前往報名表</a>
   </section>
 
   <section aria-labelledby="h-faq">
@@ -418,23 +392,11 @@ footer{color:var(--muted);font-size:14px;text-align:center;border-top:1px solid 
 <div class="dock" role="region" aria-label="報名">
   <div class="dock-in">
     <p><b>1/25～1/29 冬令營</b>・限量 <span class="num">30</span> 名<br>贈STEAM飛行套件</p>
-    <a class="btn btn-primary" href="#register">立即報名</a>
+    <a class="btn btn-primary" href="https://docs.google.com/forms/d/1Pl-W0dfejheaaLPiwcE7hB2VjO5CaDCwFGPHgg-Usoc/viewform" target="_blank" rel="noopener">立即報名</a>
   </div>
 </div>
 
-<script>
-// 報名表連結：貼上 Google 表單或報名系統網址後即自動啟用按鈕
-const REG_URL = "https://docs.google.com/forms/d/1Pl-W0dfejheaaLPiwcE7hB2VjO5CaDCwFGPHgg-Usoc/viewform";
-(function(){
-  const link = document.getElementById("reg-link");
-  const pending = document.getElementById("reg-pending");
-  if (REG_URL) {
-    link.href = REG_URL;
-    link.hidden = false;
-    pending.hidden = true;
-  }
-})();
-</script>
+
 
 </body>
 </html>
