@@ -126,6 +126,9 @@ section{display:flex;flex-direction:column;gap:18px}
 .next-tab{align-self:center;display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:0 24px;border:2px solid var(--line);border-radius:999px;color:var(--line);font-weight:900;text-decoration:none;background:var(--panel)}
 .next-tab:hover{background:var(--panel-2)}
 
+.video{position:relative;width:100%;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#0B1424;box-shadow:0 6px 24px rgba(16,35,59,.18)}
+.video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+
 /* recap */
 .gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .gallery figure{margin:0;position:relative;border-radius:12px;overflow:hidden;background:var(--panel-2)}
@@ -232,6 +235,17 @@ footer{color:var(--muted);font-size:14px;text-align:center;border-top:1px solid 
     <button type="button" role="tab" id="tab-faq" aria-controls="panel-faq" aria-selected="false" data-tab="faq">常見問題</button>
   </nav>
   <div class="tabpanel" id="panel-course" role="tabpanel" aria-labelledby="tab-course">
+    <section aria-labelledby="h-video">
+      <div class="sec-head">
+        <h2 id="h-video">什麼是無人機足球？</h2>
+        <p>包著球型保護框的無人機本身就是「球」，兩隊分組操控、攻守對抗，由前鋒穿過空中球門得分。看影片認識這項新興科技運動：</p>
+      </div>
+      <div class="video">
+        <iframe src="https://www.youtube-nocookie.com/embed/4ndio8t8Lrg?rel=0" title="無人機足球怎麼玩 美電子展覽辦示範賽" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+      <p class="privacy">影片無法播放？<a href="https://youtu.be/4ndio8t8Lrg" target="_blank" rel="noopener">到 YouTube 觀看</a></p>
+    </section>
+
     <section aria-labelledby="h-hl">
       <div class="sec-head">
         <h2 id="h-hl">三大亮點</h2>
