@@ -111,6 +111,8 @@ section{display:flex;flex-direction:column;gap:18px}
 .days .d{position:absolute;left:-23px;top:0;width:44px;height:44px;border-radius:50%;background:var(--panel);border:2px solid var(--line);color:var(--line);
   display:flex;align-items:center;justify-content:center;font-family:var(--f-num);font-weight:700;font-size:13px;line-height:1.05;text-align:center}
 .days h3{font-size:18px;font-weight:900;padding-top:10px}
+.days li.arena .d{background:var(--cta);border-color:#E5AE00;color:var(--ink)}
+.days li.arena h3{color:var(--hot)}
 .days p{color:var(--muted);font-size:15px}
 
 /* simulator */
@@ -214,6 +216,7 @@ footer{color:var(--muted);font-size:14px;text-align:center;border-top:1px solid 
       <span class="chip">國小 <b class="num">3</b> 年級以上・無經驗可</span>
       <span class="chip">五天共 <b class="num">30</b> 小時</span>
       <span class="chip">限量 <b class="num">30</b> 名</span>
+      <span class="chip">最後兩天・<b>國際競技場實戰</b></span>
     </div>
     <div class="hero-cta">
       <a class="btn btn-primary" href="#register">立即報名</a>
@@ -274,11 +277,11 @@ footer{color:var(--muted);font-size:14px;text-align:center;border-top:1px solid 
       <p>由淺入深，從認識無人機到完成自己的程式飛行任務。</p>
     </div>
     <ol class="days">
-      <li><span class="d">1/25</span><h3>認識無人機與飛行安全</h3><p>飛行原理、安全規範，用無人機足球模擬培訓系統練習操控。</p></li>
-      <li><span class="d">1/26</span><h3>STEAM 組裝飛行套件</h3><p>機架、馬達、電路一步步組起來。</p></li>
-      <li><span class="d">1/27</span><h3>實機遙控飛行訓練</h3><p>起降、定高、轉向，練出穩定手感。</p></li>
-      <li><span class="d">1/28</span><h3>AI 助手 × Python 程式飛行</h3><p>以 AI 為 Python 程式助手，寫出程式讓無人機自動完成飛行任務。</p></li>
-      <li><span class="d">1/29</span><h3>任務挑戰與結營</h3><p>遙控＋程式任務挑戰，頒發結營證書。</p></li>
+      <li><span class="d">1/25</span><h3>認識無人機・模擬培訓</h3><p>飛行原理、安全規範，用無人機足球模擬培訓系統練習操控。</p></li>
+      <li><span class="d">1/26</span><h3>STEAM 組裝＋實機遙控</h3><p>親手組裝飛行套件，起降、定高、轉向，練出穩定手感。</p></li>
+      <li><span class="d">1/27</span><h3>AI 助手 × Python 程式飛行</h3><p>以 AI 為 Python 程式助手，寫出程式讓無人機自動完成飛行任務。</p></li>
+      <li class="arena"><span class="d">1/28</span><h3>國際競技場實戰（一）</h3><p>足球無人機進入國際規格競技場，分隊練習攻守戰術與團隊配合。</p></li>
+      <li class="arena"><span class="d">1/29</span><h3>國際競技場實戰（二）・結營</h3><p>足球無人機分組對抗賽正式開打，頒發結營證書。</p></li>
     </ol>
   </section>
 
