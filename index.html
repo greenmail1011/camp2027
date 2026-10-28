@@ -5,7 +5,12 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta property="og:title" content="2027 AI創客無人機冬令營">
 <meta property="og:description" content="1/25–1/29 寒假五日營隊｜親手組裝遙控 × AI 寫程式自動飛行｜每位學員贈送 STEAM 飛行套件">
-<meta property="og:image" content="https://greenmail1011.github.io/camp2027/dm.jpg">
+<meta property="og:image" content="https://greenmail1011.github.io/camp2027/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://greenmail1011.github.io/camp2027/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 <title>2027 AI創客無人機冬令營</title>
 <meta name="description" content="2027 寒假五日營隊 1/25–1/29：親手組裝遙控、以 AI 為 Python 助手寫程式自動飛行，每位學員贈送 STEAM飛行套件。">
@@ -155,6 +160,21 @@ section{display:flex;flex-direction:column;gap:18px}
 .price .lbl{font-weight:700}
 .price .amt{font-family:var(--f-num);font-size:30px;font-weight:700}
 .price small{color:var(--muted);font-size:14px}
+.eb{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:14px 16px;border-radius:12px;background:#B23A0A;color:#FFFFFF;font-weight:700}
+.eb b{font-family:var(--f-num);font-size:26px;color:#FFE27A;margin:0 2px}
+.eb-btn{background:#FFFFFF;color:#B23A0A;border-color:#FFFFFF}
+.tier .tag-now,.tier .tag-done{display:none;font-style:normal;font-size:12px;font-weight:700;padding:1px 8px;border-radius:999px;margin-left:6px;vertical-align:2px}
+.tier-now{border:2px solid var(--hot)!important}
+.tier-now .tag-now{display:inline-block;background:var(--hot);color:#FFFFFF}
+.tier-done{opacity:.55}
+.tier-done .amt{text-decoration:line-through}
+.tier-done .tag-done{display:inline-block;background:var(--border);color:var(--muted)}
+.share{display:grid;grid-template-columns:1fr;gap:12px;align-items:center;padding:18px;border-radius:12px;background:#ECFBF1;border:1px solid #9BDDB4}
+@media (min-width:640px){.share{grid-template-columns:1fr auto}}
+.share-btns{display:flex;flex-wrap:wrap;gap:8px}
+.btn-line{background:#06C755;color:#06281A;border-color:#05A847}
+.btn-line:hover{background:#2FD474}
+#copy-msg:empty{display:none}
 .note{background:#FFF4CC;border:1px solid #E5AE00;color:var(--ink);border-radius:8px;padding:10px 14px;font-weight:700;text-align:center}
 
 /* perks */
@@ -349,18 +369,30 @@ footer{color:var(--muted);font-size:14px;text-align:center;border-top:1px solid 
 
     <section aria-labelledby="h-price">
       <div class="sec-head"><h2 id="h-price">營隊費用</h2></div>
+        <div class="eb" id="eb-banner" hidden><span id="eb-text"></span><a class="btn btn-sm eb-btn" href="https://docs.google.com/forms/d/1Pl-W0dfejheaaLPiwcE7hB2VjO5CaDCwFGPHgg-Usoc/viewform" target="_blank" rel="noopener">把握優惠報名</a></div>
       <div class="price">
-        <div class="panel" style="border:2px solid var(--hot)"><span class="lbl">超早鳥</span><span class="amt" style="color:var(--hot)">$8,800</span><small><span class="num">11/30</span> 前報名繳費，折扣 <span class="num">1,000</span> 元</small></div>
-        <div class="panel"><span class="lbl">早鳥</span><span class="amt" style="color:var(--line)">$9,300</span><small><span class="num">12/31</span> 前報名繳費，折扣 <span class="num">500</span> 元</small></div>
-        <div class="panel"><span class="lbl">原價</span><span class="amt">$9,800</span><small><span class="num">2027/1/1</span> 起報名</small></div>
+        <div class="panel tier tier-now" id="tier-super"><span class="lbl">超早鳥 <em class="tag-now">目前優惠</em><em class="tag-done">已截止</em></span><span class="amt" style="color:var(--hot)">$8,800</span><small><span class="num">11/30</span> 前報名繳費，折扣 <span class="num">1,000</span> 元</small></div>
+        <div class="panel tier" id="tier-early"><span class="lbl">早鳥 <em class="tag-now">目前優惠</em><em class="tag-done">已截止</em></span><span class="amt" style="color:var(--line)">$9,300</span><small><span class="num">12/31</span> 前報名繳費，折扣 <span class="num">500</span> 元</small></div>
+        <div class="panel tier" id="tier-regular"><span class="lbl">原價 <em class="tag-now">目前價格</em></span><span class="amt">$9,800</span><small><span class="num">2027/1/1</span> 起報名</small></div>
       </div>
       <div class="panel" style="display:flex;flex-direction:column;gap:8px">
         <p style="font-weight:900">身份優惠｜每位折 <span class="num" style="color:var(--hot)">$1,000</span>（擇一，優惠不可重複）</p>
         <ul style="margin:0;padding-left:1.2em;color:var(--muted);display:flex;flex-direction:column;gap:2px">
           <li>團報 2 人（含）以上</li>
-          <li>陽明交大教職員子女（需上傳教職員證）</li>
+          <li>陽明交大教職員子女（報名後於 LINE 群組提供教職員證）</li>
           <li>未來斑馬程式設計學苑學員</li>
         </ul>
+      </div>
+      <div class="share">
+        <div style="display:flex;flex-direction:column;gap:4px;min-width:0">
+          <p style="font-weight:900;font-size:18px">揪朋友一起報名，每人省 <span class="num" style="color:var(--hot)">$1,000</span></p>
+          <p style="color:var(--muted);font-size:15px">2 人（含）以上團報享優惠，把網站分享給同學的家長吧！</p>
+        </div>
+        <div class="share-btns">
+          <a class="btn btn-line" href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fgreenmail1011.github.io%2Fcamp2027%2F" target="_blank" rel="noopener">分享到 LINE</a>
+          <button type="button" class="btn btn-ghost" id="copy-link">分享／複製網址</button>
+        </div>
+        <p id="copy-msg" class="privacy" role="status" aria-live="polite"></p>
       </div>
       <p class="note">費用含STEAM飛行套件，名額有限，欲報從速！</p>
     </section>
@@ -425,7 +457,7 @@ footer{color:var(--muted);font-size:14px;text-align:center;border-top:1px solid 
 
 <div class="dock" role="region" aria-label="報名">
   <div class="dock-in">
-    <p><b>1/25～1/29 冬令營</b>・限量 <span class="num">30</span> 名<br>贈STEAM飛行套件</p>
+    <p id="dock-msg"><b>1/25～1/29 冬令營</b>・限量 <span class="num">30</span> 名<br>贈STEAM飛行套件</p>
     <a class="btn btn-primary" href="https://docs.google.com/forms/d/1Pl-W0dfejheaaLPiwcE7hB2VjO5CaDCwFGPHgg-Usoc/viewform" target="_blank" rel="noopener">立即報名</a>
   </div>
 </div>
@@ -453,6 +485,34 @@ footer{color:var(--muted);font-size:14px;text-align:center;border-top:1px solid 
   var h=(location.hash||"").slice(1);
   show(ids.indexOf(h)>=0?h:"course",ids.indexOf(h)>=0);
   window.addEventListener("hashchange",function(){var k=location.hash.slice(1);if(ids.indexOf(k)>=0)show(k,true);});
+})();
+</script>
+<script>
+(function(){
+  var TIERS=[{id:"tier-super",name:"超早鳥",price:"$8,800",end:new Date("2026-11-30T23:59:59+08:00"),label:"11/30"},
+             {id:"tier-early",name:"早鳥",price:"$9,300",end:new Date("2026-12-31T23:59:59+08:00"),label:"12/31"}];
+  var now=new Date(), cur=null;
+  TIERS.forEach(function(t){var el=document.getElementById(t.id);el.classList.remove("tier-now");if(now>t.end){el.classList.add("tier-done");}else if(!cur){cur=t;}});
+  var reg=document.getElementById("tier-regular");
+  if(cur){document.getElementById(cur.id).classList.add("tier-now");}else{reg.classList.add("tier-now");}
+  if(cur){
+    var tw=new Date(now.getTime()+8*3600000), tz=Date.UTC(tw.getUTCFullYear(),tw.getUTCMonth(),tw.getUTCDate());
+    var ew=new Date(cur.end.getTime()+8*3600000), ez=Date.UTC(ew.getUTCFullYear(),ew.getUTCMonth(),ew.getUTCDate());
+    var days=Math.round((ez-tz)/86400000);
+    var left=days<1?"今天截止":"倒數 <b>"+days+"</b> 天";
+    var eb=document.getElementById("eb-banner");
+    document.getElementById("eb-text").innerHTML=cur.name+"優惠"+left+"｜"+cur.label+" 前報名繳費，每位 "+cur.price;
+    eb.hidden=false;
+    var dm=document.getElementById("dock-msg");
+    if(dm){dm.innerHTML="<b>"+cur.name+"優惠"+(days<1?"今天截止":"倒數 "+days+" 天")+"</b><br>每位 "+cur.price+"・限量 30 名";}
+  }
+  var btn=document.getElementById("copy-link"), msg=document.getElementById("copy-msg"), url="https://greenmail1011.github.io/camp2027/";
+  if(btn){btn.addEventListener("click",function(){
+    function done(t){msg.textContent=t;}
+    if(navigator.share){navigator.share({title:"2027 AI創客無人機冬令營",text:"寒假 1/25–1/29 無人機冬令營，2 人團報每人省 $1,000！",url:url}).catch(function(){});return;}
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(url).then(function(){done("已複製網址，可以貼給朋友了！");},function(){done("網址："+url);});}
+    else{done("網址："+url);}
+  });}
 })();
 </script>
 
