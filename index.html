@@ -63,7 +63,10 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .hero h1{font-size:clamp(30px,8vw,52px);font-weight:900;letter-spacing:.02em}
 .hero h1 .num{color:var(--line)}
 .hero .sub{font-size:clamp(17px,4.4vw,22px);font-weight:700}
-.kitpic{margin:0;width:min(100%,300px);aspect-ratio:1;max-width:100%;background:#FFFFFF;border:1px solid var(--line-soft);border-radius:16px;overflow:hidden}
+.battle{margin:0 0 4px;width:100%;max-width:100%;border-radius:14px;overflow:hidden;background:#0B1424;box-shadow:0 8px 28px rgba(16,35,59,.25)}
+.battle img{display:block;width:100%;height:auto}
+@media (max-width:639px){.battle{width:calc(100% + 24px);max-width:none;margin-inline:-12px}.battle img{aspect-ratio:2.4/1;object-fit:cover}}
+.kitpic{margin:0;width:min(100%,220px);aspect-ratio:1;max-width:100%;background:#FFFFFF;border:1px solid var(--line-soft);border-radius:16px;overflow:hidden;justify-self:center}
 .kitpic img{display:block;width:100%;height:100%;object-fit:contain}
 .when{font-family:var(--f-num);font-size:clamp(26px,7vw,36px);font-weight:700;color:var(--text);line-height:1.1}
 .when small{font-family:var(--f-body);font-size:.5em;font-weight:700;color:var(--muted);letter-spacing:.08em}
@@ -96,7 +99,8 @@ section{display:flex;flex-direction:column;gap:18px}
 .hl p:last-child{color:var(--muted);font-size:15px}
 
 /* kit */
-.kit{background:var(--panel-2);border-color:var(--line-soft)}
+.kit{background:var(--panel-2);border-color:var(--line-soft);display:grid;grid-template-columns:1fr;gap:16px;align-items:center}
+@media (min-width:640px){.kit{grid-template-columns:200px 1fr}}
 .kit h3{font-size:24px;font-weight:900;color:var(--line)}
 .kit ul{margin:8px 0 0;padding-left:1.2em;color:var(--muted);display:flex;flex-direction:column;gap:4px}
 
@@ -200,10 +204,10 @@ footer{color:var(--muted);font-size:14px;text-align:center;border-top:1px solid 
     <h1 id="t"><span class="num">2027</span> AI創客無人機冬令營</h1>
     <p class="sub">Feeby 組裝遙控 × Tello&nbsp;EDU 程式飛行</p>
     <p class="when">1/25<small>(一)</small> ~ 1/29<small>(五)</small></p>
-    <figure class="kitpic"><img src="kit.jpg" alt="Feeby STEAM飛行套件：白色球型保護框無人機，尺寸 125 × 125 mm" width="465" height="464"></figure>
+    <figure class="battle"><img src="battle.jpg" alt="紅藍兩台球型足球無人機正面對撞、迸出電光" width="972" height="282"></figure>
     <div class="gift">
       <span class="tag">營隊好禮</span>
-      <strong>每位學員贈送STEAM飛行套件</strong>
+      <strong>每位學員贈送<br>STEAM飛行套件</strong>
       <span>Feeby 遙控飛行套件：營隊中親手組裝，結營帶回家繼續飛</span>
     </div>
     <div class="facts">
@@ -249,6 +253,7 @@ footer{color:var(--muted);font-size:14px;text-align:center;border-top:1px solid 
 
   <section aria-labelledby="h-kit">
     <div class="panel kit">
+      <figure class="kitpic"><img src="kit.jpg" alt="Feeby STEAM飛行套件：白色球型保護框無人機，尺寸 125 × 125 mm" width="465" height="464" loading="lazy"></figure>
       <div>
         <h3 id="h-kit">贈品：STEAM飛行套件</h3>
         <p>每位學員一套 Feeby，營隊中親手組裝，結營後帶回家繼續練習遙控飛行。</p>
