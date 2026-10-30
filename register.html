@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>報名費用試算｜2027 AI創客無人機冬令營</title>
-<meta name="description" content="選擇報名身份與午餐方式，自動計算應繳金額，完成匯款與加入 LINE 群組後填寫報名表。">
-<meta property="og:title" content="報名費用試算｜2027 AI創客無人機冬令營">
+<title>線上報名｜2027 AI創客無人機冬令營</title>
+<meta name="description" content="一頁完成報名：填寫學員與家長資料、選擇報名身份與午餐，自動計算費用，匯款並加入 LINE 群組後送出。">
+<meta property="og:title" content="線上報名｜2027 AI創客無人機冬令營">
 <meta property="og:image" content="https://greenmail1011.github.io/camp2027/dm.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,7 +15,7 @@
   --bg:#F3F8FC; --sky:#DDF1F8; --panel:#FFFFFF; --panel-2:#EAF4FA;
   --text:#10233B; --muted:#4A5D74;
   --line:#0A7A9A; --line-soft:#A9DCEB;
-  --cta:#FFC928; --cta-hover:#FFD95E; --hot:#C2410C;
+  --cta:#FFC928; --cta-hover:#FFD95E; --hot:#C2410C; --err:#B42318;
   --border:#CFE3EE; --ink:#10233B; --ok:#15803D;
   --f-body:"Noto Sans TC",system-ui,-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;
   --f-num:"Chakra Petch","Noto Sans TC",system-ui,sans-serif;
@@ -23,7 +23,7 @@
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 body{margin:0;background:var(--bg);color:var(--text);font-family:var(--f-body);font-size:16px;line-height:1.65;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 120px}
@@ -32,7 +32,8 @@ a{color:var(--line)}
 h1,h2,h3{margin:0;line-height:1.3;text-wrap:balance}
 p{margin:0;text-wrap:pretty}
 .num{font-family:var(--f-num);font-variant-numeric:tabular-nums}
-.wrap{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+.wrap{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:24px}
+.vh{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
 /* top bar */
 .top{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.96);border-bottom:1px solid var(--border);
@@ -50,7 +51,7 @@ p{margin:0;text-wrap:pretty}
 .flow li{background:var(--panel);border:1px solid var(--line-soft);border-radius:999px;padding:3px 12px;font-size:14px;font-weight:700}
 .flow .num{color:var(--line);margin-right:4px}
 
-/* steps */
+/* step cards */
 .step{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:20px 18px;display:flex;flex-direction:column;gap:14px}
 .step-h{display:flex;align-items:center;gap:12px}
 .step-h .n{flex:0 0 34px;height:34px;border-radius:8px;background:var(--line);color:#FFFFFF;font-family:var(--f-num);font-weight:700;display:flex;align-items:center;justify-content:center}
@@ -60,12 +61,32 @@ p{margin:0;text-wrap:pretty}
 .step.done .step-h .req{color:var(--ok)}
 .hint{color:var(--muted);font-size:15px}
 
+/* fields */
+.grid{display:grid;grid-template-columns:1fr;gap:14px}
+@media (min-width:600px){.grid.two{grid-template-columns:1fr 1fr}}
+.field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.field > label,.field > .lbl{font-weight:700}
+.field .star{color:var(--hot);margin-left:2px}
+.field small{color:var(--muted);font-size:13px;line-height:1.4}
+input[type=text],input[type=tel],select,textarea{width:100%;min-height:48px;padding:10px 12px;border:2px solid var(--border);border-radius:10px;background:#FFFFFF;
+  font:inherit;color:var(--text)}
+textarea{min-height:84px;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--line)}
+.field.bad input,.field.bad select,.field.bad textarea{border-color:var(--err);background:#FFF6F5}
+.err{color:var(--err);font-size:14px;font-weight:700}
+.field:not(.bad) .err,.group-err:not(.show){display:none}
+.seg{display:flex;gap:10px}
+.seg label{flex:1 1 0;display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;border:2px solid var(--border);border-radius:10px;cursor:pointer;font-weight:700}
+.seg input{width:20px;height:20px;accent-color:var(--line);margin:0}
+.seg label:has(input:checked){border-color:var(--line);background:var(--panel-2)}
+.field.bad .seg label{border-color:var(--err)}
+
 /* option cards */
 .opts{display:grid;gap:10px}
-.opt{position:relative;display:flex;align-items:center;gap:12px;padding:14px 14px;border:2px solid var(--border);border-radius:12px;background:var(--panel);cursor:pointer;min-height:64px}
+.opt{position:relative;display:flex;align-items:center;gap:12px;padding:14px;border:2px solid var(--border);border-radius:12px;background:var(--panel);cursor:pointer;min-height:64px}
 .opt:hover{border-color:var(--line-soft)}
 .opt input{position:absolute;opacity:0;pointer-events:none}
-.opt .dot{flex:0 0 22px;height:22px;border-radius:50%;border:2px solid var(--line-soft);background:#FFFFFF;display:flex;align-items:center;justify-content:center}
+.opt .dot{flex:0 0 22px;height:22px;border-radius:50%;border:2px solid var(--line-soft);background:#FFFFFF}
 .opt .txt{flex:1 1 auto;min-width:0;display:flex;flex-direction:column}
 .opt .t{font-weight:900}
 .opt .d{color:var(--muted);font-size:14px;line-height:1.45}
@@ -78,11 +99,19 @@ p{margin:0;text-wrap:pretty}
 .opt.off .t,.opt.off .p{color:#8A98A8}
 .opt .badge{display:inline-block;margin-left:6px;font-size:12px;font-weight:700;color:var(--hot);border:1.5px solid var(--hot);border-radius:4px;padding:0 5px;vertical-align:2px}
 .opt.off .badge{color:#8A98A8;border-color:#B8C3CE}
-.callout{background:#FFF4CC;border:1px solid #E5AE00;border-radius:10px;padding:10px 14px;font-size:15px;font-weight:700}
+.sub{border-left:4px solid var(--cta);background:#FFFBEA;border-radius:0 10px 10px 0;padding:14px}
+.group-err{color:var(--err);font-size:14px;font-weight:700}
+
+/* upload */
+.drop{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.drop input[type=file]{position:absolute;opacity:0;width:1px;height:1px}
+.file-info{font-size:14px;color:var(--muted);min-width:0;overflow-wrap:anywhere}
+.file-info b{color:var(--ok)}
+.thumb{width:72px;height:72px;border-radius:8px;object-fit:cover;border:1px solid var(--border)}
 
 /* total */
 .total{border:2px solid var(--line);background:var(--panel-2)}
-.calc{margin:0;display:grid;grid-template-columns:1fr auto;row-gap:8px}
+.calc{margin:0;display:grid;grid-template-columns:1fr auto;row-gap:8px;column-gap:12px}
 .calc dt,.calc dd{margin:0}
 .calc dt{color:var(--muted)}
 .calc dd{font-family:var(--f-num);font-weight:700;text-align:right}
@@ -97,6 +126,7 @@ p{margin:0;text-wrap:pretty}
 .bank dt:last-of-type,.bank dd:last-of-type{border-bottom:0}
 .acct{font-family:var(--f-num);font-weight:700;font-size:20px;letter-spacing:.04em;user-select:all}
 .amt-due{font-family:var(--f-num);font-weight:700;font-size:20px;color:var(--hot)}
+#last5{font-family:var(--f-num);font-size:22px;letter-spacing:.3em;max-width:200px}
 
 /* buttons */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 22px;border-radius:8px;
@@ -107,27 +137,37 @@ p{margin:0;text-wrap:pretty}
 .btn-line:hover{background:#05B34C}
 .btn-ghost{border-color:var(--line);color:var(--line);background:var(--panel)}
 .btn-sm{min-height:36px;padding:0 12px;font-size:14px;letter-spacing:.04em}
-.btn[aria-disabled="true"]{background:#E3E8EE;border-color:#CDD5DE;color:#7C8A9A;cursor:not-allowed}
 .btn-block{width:100%}
+.btn:disabled{background:#E3E8EE;border-color:#CDD5DE;color:#7C8A9A;cursor:wait}
 
 /* checks */
 .check{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border:2px solid var(--border);border-radius:10px;cursor:pointer;font-weight:700}
 .check input{width:22px;height:22px;margin:2px 0 0;accent-color:var(--ok);flex:0 0 auto}
 .check:has(input:checked){border-color:var(--ok);background:#EEF8F1}
-.check small{display:block;font-weight:400;color:var(--muted);font-size:14px}
+.field.bad .check{border-color:var(--err)}
 
+.locked{display:flex;gap:10px;align-items:center;padding:14px;border:2px dashed var(--border);border-radius:10px;color:var(--muted);font-weight:700}
 .line-box{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
 .qr{width:132px;height:132px;border:1px solid var(--border);border-radius:10px;padding:6px;background:#FFFFFF;flex:0 0 auto}
 .qr svg{display:block;width:100%;height:100%}
 .line-txt{flex:1 1 200px;display:flex;flex-direction:column;gap:10px;min-width:0}
 
-/* finish */
+/* submit */
 .finish{border:2px solid #E5AE00;background:#FFF8DD}
-.todo{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;font-size:15px}
-.todo li{display:flex;gap:8px;align-items:center}
-.todo .mk{flex:0 0 20px;height:20px;border-radius:50%;border:2px solid #B8C3CE;display:flex;align-items:center;justify-content:center;font-size:12px;color:#FFFFFF}
-.todo li.ok .mk{background:var(--ok);border-color:var(--ok)}
-.todo li.ok{color:var(--ok);font-weight:700}
+.summary{margin:0;display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:15px}
+.summary dt{color:var(--muted);white-space:nowrap}
+.summary dd{margin:0;font-weight:700;min-width:0;overflow-wrap:anywhere}
+.refund{font-size:14px;color:var(--muted)}
+.refund summary{cursor:pointer;font-weight:700;color:var(--line)}
+.refund ul{margin:6px 0 0;padding-left:1.2em}
+.alert{border-radius:10px;padding:12px 14px;font-weight:700;font-size:15px}
+.alert.bad{background:#FFF1F0;border:1px solid #F4B4AE;color:var(--err)}
+
+/* done */
+.done-card{margin-top:20px;text-align:center;align-items:center;border:2px solid var(--ok);background:#F0FAF3}
+.done-card .big{width:64px;height:64px;border-radius:50%;background:var(--ok);color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:900}
+.done-card h2{font-size:26px;font-weight:900}
+.done-card .summary{text-align:left;background:#FFFFFF;border:1px solid var(--border);border-radius:10px;padding:14px;width:100%}
 
 footer{color:var(--muted);font-size:14px;text-align:center;border-top:1px solid var(--border);padding-top:20px}
 
@@ -151,95 +191,181 @@ footer{color:var(--muted);font-size:14px;text-align:center;border-top:1px solid 
   </div>
 </header>
 
-<main class="wrap">
+<main class="wrap" id="main">
   <section class="intro" aria-labelledby="t">
-    <h1 id="t">報名費用試算</h1>
-    <p>選好報名身份和午餐方式，應繳金額會自動算出來。完成匯款、加入 LINE 群組後，再填寫報名表即完成報名。</p>
+    <h1 id="t">線上報名</h1>
+    <p>這一頁就能完成報名：填寫資料、選擇身份與午餐後，費用會自動計算；完成匯款並加入 LINE 群組後送出即完成。</p>
     <ol class="flow">
-      <li><span class="num">1</span>選身份</li>
-      <li><span class="num">2</span>選午餐</li>
-      <li><span class="num">3</span>匯款</li>
-      <li><span class="num">4</span>加入 LINE</li>
-      <li><span class="num">5</span>填報名表</li>
+      <li><span class="num">1</span>學員</li>
+      <li><span class="num">2</span>家長</li>
+      <li><span class="num">3</span>身份</li>
+      <li><span class="num">4</span>午餐</li>
+      <li><span class="num">5</span>匯款</li>
+      <li><span class="num">6</span>LINE</li>
+      <li><span class="num">7</span>送出</li>
     </ol>
   </section>
 
-  <!-- step 1 -->
-  <section class="step" id="s1" aria-labelledby="h1">
-    <div class="step-h"><span class="n">1</span><h2 id="h1">報名身份</h2><span class="req" data-req>擇一・必選</span></div>
-    <p class="hint">優惠不可重複，請選一項最符合的身份。</p>
-    <div class="opts" id="ids" role="radiogroup" aria-labelledby="h1"></div>
-    <p class="callout" id="id-note" hidden></p>
-  </section>
+  <form id="reg" novalidate>
+    <div class="wrap" style="gap:24px">
+    <input type="text" name="website" class="vh" tabindex="-1" autocomplete="off" aria-hidden="true">
 
-  <!-- step 2 -->
-  <section class="step" id="s2" aria-labelledby="h2">
-    <div class="step-h"><span class="n">2</span><h2 id="h2">午餐方式</h2><span class="req" data-req>必選</span></div>
-    <div class="opts" role="radiogroup" aria-labelledby="h2">
-      <label class="opt">
-        <input type="radio" name="lunch" value="self">
-        <span class="dot" aria-hidden="true"></span>
-        <span class="txt"><span class="t">自備午餐</span><span class="d">每天自行準備午餐</span></span>
-        <span class="p">+$0</span>
-      </label>
-      <label class="opt">
-        <input type="radio" name="lunch" value="order">
-        <span class="dot" aria-hidden="true"></span>
-        <span class="txt"><span class="t">請老師代訂午餐</span><span class="d">每天 <span class="num">$150</span> × <span class="num">5</span> 天</span></span>
-        <span class="p">+$750</span>
-      </label>
-    </div>
-  </section>
-
-  <!-- total -->
-  <section class="step total" aria-labelledby="h-total" aria-live="polite">
-    <h2 id="h-total" style="font-size:18px;font-weight:900;letter-spacing:.06em">應繳金額</h2>
-    <dl class="calc">
-      <dt id="c-id-l">營隊費用</dt><dd id="c-id">—</dd>
-      <dt>午餐</dt><dd id="c-lunch">—</dd>
-      <dt class="sum">合計</dt><dd class="sum" id="c-total">—</dd>
-    </dl>
-    <p class="hint" id="c-hint">請先完成上面兩項選擇。</p>
-  </section>
-
-  <!-- step 3 -->
-  <section class="step" id="s3" aria-labelledby="h3">
-    <div class="step-h"><span class="n">3</span><h2 id="h3">匯款繳費</h2><span class="req" data-req>必做</span></div>
-    <dl class="bank">
-      <dt>戶名</dt><dd>新竹市無人機創新科技協會</dd>
-      <dt>銀行</dt><dd>國泰世華銀行 新竹分行（代號 <span class="num">013</span>）</dd>
-      <dt>帳號</dt><dd><span class="acct" id="acct">040-03-501696-3</span><button type="button" class="btn btn-ghost btn-sm" id="copy">複製帳號</button></dd>
-      <dt>金額</dt><dd><span class="amt-due" id="due">請先選擇身份與午餐</span></dd>
-    </dl>
-    <p class="hint">依繳費順序確認名額。匯款後請記下<b>匯款帳號後 <span class="num">5</span> 碼</b>，報名表會用到。</p>
-    <label class="check"><input type="checkbox" id="paid"><span>我已完成匯款，並記下帳號後 <span class="num">5</span> 碼<small>報名表會請你填寫，方便我們查核入帳</small></span></label>
-  </section>
-
-  <!-- step 4 -->
-  <section class="step" id="s4" aria-labelledby="h4">
-    <div class="step-h"><span class="n">4</span><h2 id="h4">加入 LINE 群組</h2><span class="req" data-req>必做</span></div>
-    <div class="line-box">
-      <div class="qr" id="qr" aria-label="LINE 群組 QR code" role="img" hidden></div>
-      <div class="line-txt">
-        <p class="hint">營隊通知與行前說明都會在群組公告。手機請直接點按鈕；用電腦請以手機掃描 QR code。</p>
-        <a class="btn btn-line" id="line-btn" href="https://line.me/ti/g/mHkhwADwhv" target="_blank" rel="noopener">開啟 LINE 加入群組</a>
+    <!-- 1 學員 -->
+    <section class="step" id="s1" aria-labelledby="h1">
+      <div class="step-h"><span class="n">1</span><h2 id="h1">學員資料</h2><span class="req" data-req>必填</span></div>
+      <div class="grid two">
+        <div class="field"><label for="name">學員姓名<span class="star">*</span></label>
+          <input type="text" id="name" name="name" autocomplete="off" required>
+          <span class="err">請填寫學員姓名</span></div>
+        <div class="field"><label for="birth">出生年月日（民國）<span class="star">*</span></label>
+          <input type="text" id="birth" name="birth" inputmode="numeric" maxlength="7" placeholder="例：1000120" required>
+          <small>民國年＋月＋日，營隊團體保險使用</small>
+          <span class="err">請填 6～7 位數字，例：1000120</span></div>
+        <div class="field"><label for="idno">身分證字號<span class="star">*</span></label>
+          <input type="text" id="idno" name="idno" autocomplete="off" maxlength="10" placeholder="例：A123456789" style="text-transform:uppercase" required>
+          <small>營隊團體保險使用</small>
+          <span class="err">格式為 1 個英文字母＋9 位數字</span></div>
+        <div class="field"><span class="lbl" id="l-gender">性別<span class="star">*</span></span>
+          <div class="seg" role="radiogroup" aria-labelledby="l-gender">
+            <label><input type="radio" name="gender" value="男">男</label>
+            <label><input type="radio" name="gender" value="女">女</label>
+          </div>
+          <span class="err">請選擇性別</span></div>
+        <div class="field"><label for="school">就讀學校<span class="star">*</span></label>
+          <input type="text" id="school" name="school" placeholder="例：新竹市○○國小" required>
+          <span class="err">請填寫就讀學校</span></div>
+        <div class="field"><label for="grade">年級<span class="star">*</span></label>
+          <select id="grade" name="grade" required>
+            <option value="">請選擇</option>
+            <option>三年級</option><option>四年級</option><option>五年級</option><option>六年級</option>
+            <option>七年級</option><option>八年級</option><option>九年級</option>
+            <option value="__other">其他</option>
+          </select>
+          <input type="text" id="gradeOther" name="gradeOther" placeholder="請填寫年級" hidden>
+          <span class="err">請選擇年級</span></div>
       </div>
-    </div>
-    <label class="check"><input type="checkbox" id="joined"><span>我已加入 LINE 群組</span></label>
-  </section>
+    </section>
 
-  <!-- step 5 -->
-  <section class="step finish" id="s5" aria-labelledby="h5">
-    <div class="step-h"><span class="n">5</span><h2 id="h5">填寫報名表，完成報名</h2></div>
-    <ul class="todo" id="todo">
-      <li data-k="id"><span class="mk" aria-hidden="true">✓</span>選擇報名身份</li>
-      <li data-k="lunch"><span class="mk" aria-hidden="true">✓</span>選擇午餐方式</li>
-      <li data-k="paid"><span class="mk" aria-hidden="true">✓</span>完成匯款</li>
-      <li data-k="joined"><span class="mk" aria-hidden="true">✓</span>加入 LINE 群組</li>
-    </ul>
-    <a class="btn btn-primary btn-block" id="go" href="#s1" aria-disabled="true">前往填寫報名表</a>
-    <p class="hint" id="go-hint">完成以上 <span class="num">4</span> 項後即可前往。報名表會自動帶入你選的身份與午餐，只要填寫學員、家長資料與匯款帳號後 <span class="num">5</span> 碼，送出後即完成報名。</p>
-  </section>
+    <!-- 2 家長 -->
+    <section class="step" id="s2" aria-labelledby="h2">
+      <div class="step-h"><span class="n">2</span><h2 id="h2">家長資料</h2><span class="req" data-req>必填</span></div>
+      <div class="grid two">
+        <div class="field"><label for="parent">家長姓名<span class="star">*</span></label>
+          <input type="text" id="parent" name="parent" autocomplete="name" required>
+          <span class="err">請填寫家長姓名</span></div>
+        <div class="field"><label for="phone">聯絡電話<span class="star">*</span></label>
+          <input type="tel" id="phone" name="phone" autocomplete="tel" inputmode="tel" placeholder="例：0912345678" required>
+          <span class="err">請填寫可聯絡的電話</span></div>
+      </div>
+    </section>
+
+    <!-- 3 身份 -->
+    <section class="step" id="s3" aria-labelledby="h3">
+      <div class="step-h"><span class="n">3</span><h2 id="h3">報名身份</h2><span class="req" data-req>擇一・必選</span></div>
+      <p class="hint">優惠不可重複，請選一項最符合的身份。</p>
+      <div class="field" id="f-ident">
+        <div class="opts" id="ids" role="radiogroup" aria-labelledby="h3"></div>
+        <span class="err">請選擇報名身份</span>
+      </div>
+      <div class="sub field" id="f-group" hidden>
+        <label for="group">同行報名的學員姓名<span class="star">*</span></label>
+        <textarea id="group" name="group" placeholder="例：王小明、陳小華"></textarea>
+        <small>每位學員都要各自填一份報名；請寫出一起報名的其他學員姓名。</small>
+        <span class="err">團報請填寫同行學員姓名</span>
+      </div>
+      <div class="sub field" id="f-file" hidden>
+        <span class="lbl">上傳陽明交大教職員證<span class="star">*</span></span>
+        <div class="drop">
+          <label class="btn btn-ghost btn-sm" for="file">選擇照片或檔案</label>
+          <input type="file" id="file" accept="image/*,application/pdf">
+          <img class="thumb" id="thumb" alt="教職員證預覽" hidden>
+          <span class="file-info" id="file-info">可拍照或上傳圖片／PDF，10MB 以內</span>
+        </div>
+        <small>檔案只會存到主辦單位的雲端硬碟，用於核對優惠資格。</small>
+        <span class="err" id="file-err">請上傳教職員證</span>
+      </div>
+    </section>
+
+    <!-- 4 午餐 -->
+    <section class="step" id="s4" aria-labelledby="h4">
+      <div class="step-h"><span class="n">4</span><h2 id="h4">午餐方式</h2><span class="req" data-req>必選</span></div>
+      <div class="field" id="f-lunch">
+        <div class="opts" role="radiogroup" aria-labelledby="h4">
+          <label class="opt"><input type="radio" name="lunch" value="self"><span class="dot" aria-hidden="true"></span>
+            <span class="txt"><span class="t">自備午餐</span><span class="d">每天自行準備午餐</span></span><span class="p">+$0</span></label>
+          <label class="opt"><input type="radio" name="lunch" value="order"><span class="dot" aria-hidden="true"></span>
+            <span class="txt"><span class="t">請老師代訂午餐</span><span class="d">每天 <span class="num">$150</span> × <span class="num">5</span> 天</span></span><span class="p">+$750</span></label>
+        </div>
+        <span class="err">請選擇午餐方式</span>
+      </div>
+    </section>
+
+    <!-- 金額 -->
+    <section class="step total" aria-labelledby="h-total" aria-live="polite">
+      <h2 id="h-total" style="font-size:18px;font-weight:900;letter-spacing:.06em">應繳金額</h2>
+      <dl class="calc">
+        <dt id="c-id-l">營隊費用</dt><dd id="c-id">—</dd>
+        <dt>午餐</dt><dd id="c-lunch">—</dd>
+        <dt class="sum">合計</dt><dd class="sum" id="c-total">—</dd>
+      </dl>
+      <p class="hint" id="c-hint">選好報名身份與午餐方式後自動計算。</p>
+    </section>
+
+    <!-- 5 匯款 -->
+    <section class="step" id="s5" aria-labelledby="h5">
+      <div class="step-h"><span class="n">5</span><h2 id="h5">匯款繳費</h2><span class="req" data-req>必做</span></div>
+      <dl class="bank">
+        <dt>戶名</dt><dd>新竹市無人機創新科技協會</dd>
+        <dt>銀行</dt><dd>國泰世華銀行 新竹分行（代號 <span class="num">013</span>）</dd>
+        <dt>帳號</dt><dd><span class="acct" id="acct">040-03-501696-3</span><button type="button" class="btn btn-ghost btn-sm" id="copy">複製帳號</button></dd>
+        <dt>金額</dt><dd><span class="amt-due" id="due">請先選擇身份與午餐</span></dd>
+      </dl>
+      <p class="hint">依繳費順序確認名額。匯款完成後，請填寫你的<b>匯款帳號後 <span class="num">5</span> 碼</b>，方便我們查核入帳。</p>
+      <div class="field">
+        <label for="last5">匯款帳號後 5 碼<span class="star">*</span></label>
+        <input type="text" id="last5" name="last5" inputmode="numeric" maxlength="5" placeholder="12345" autocomplete="off" required>
+        <span class="err">請填 5 位數字</span>
+      </div>
+    </section>
+
+    <!-- 6 LINE -->
+    <section class="step" id="s6" aria-labelledby="h6">
+      <div class="step-h"><span class="n">6</span><h2 id="h6">加入 LINE 群組</h2><span class="req" data-req>必做</span></div>
+      <div class="locked" id="line-locked">完成匯款並填寫帳號後 5 碼後，這裡會出現群組連結。</div>
+      <div id="line-open" hidden>
+        <div class="line-box">
+          <div class="qr" id="qr" aria-label="LINE 群組 QR code" role="img" hidden></div>
+          <div class="line-txt">
+            <p class="hint">營隊通知與行前說明都會在群組公告。手機請直接點按鈕；用電腦請以手機掃描 QR code。</p>
+            <a class="btn btn-line" id="line-btn" href="https://line.me/ti/g/mHkhwADwhv" target="_blank" rel="noopener">開啟 LINE 加入群組</a>
+          </div>
+        </div>
+        <div class="field" style="margin-top:14px">
+          <label class="check"><input type="checkbox" id="joined" name="joined"><span>我已加入 LINE 群組</span></label>
+          <span class="err">請加入 LINE 群組後勾選</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7 送出 -->
+    <section class="step finish" id="s7" aria-labelledby="h7">
+      <div class="step-h"><span class="n">7</span><h2 id="h7">確認並送出</h2></div>
+      <dl class="summary" id="summary"></dl>
+      <details class="refund"><summary>退費辦法</summary>
+        <ul>
+          <li>開課前 10 日以前申請：退還全額學費</li>
+          <li>開課前 7～9 日：退還 8 成</li>
+          <li>開課前 4～6 日：退還 5 成</li>
+          <li>開課前 1～3 日：不予退費</li>
+          <li>因颱風或人數不足等不可抗力因素停開或延期，學員因此退選者，學費全退。</li>
+        </ul>
+      </details>
+      <div class="alert bad" id="alert" role="alert" hidden></div>
+      <button type="submit" class="btn btn-primary btn-block" id="submit">送出報名</button>
+      <p class="hint">送出後即完成報名，我們會依匯款帳號後 5 碼核對入帳。</p>
+    </section>
+    </div>
+  </form>
 
   <footer>
     <p>報名諮詢：<span class="num" style="user-select:all">(03)540-3463</span></p>
@@ -247,77 +373,105 @@ footer{color:var(--muted);font-size:14px;text-align:center;border-top:1px solid 
   </footer>
 </main>
 
-<div class="dock" role="region" aria-label="應繳金額">
+<section class="wrap" id="done" hidden>
+  <div class="step done-card" tabindex="-1" id="done-card">
+    <div class="big" aria-hidden="true">✓</div>
+    <h2>報名完成！</h2>
+    <p class="hint">我們會依匯款帳號後 5 碼核對入帳，營隊通知與行前說明請留意 LINE 群組。</p>
+    <dl class="summary" id="done-summary"></dl>
+    <a class="btn btn-ghost" href="index.html">回營隊介紹</a>
+  </div>
+  <footer>
+    <p>報名諮詢：<span class="num" style="user-select:all">(03)540-3463</span></p>
+  </footer>
+</section>
+
+<div class="dock" id="dock" role="region" aria-label="應繳金額">
   <div class="dock-in">
     <div class="dock-sum"><small id="d-desc">尚未選擇身份與午餐</small><b id="d-total">$—</b></div>
-    <a class="btn btn-primary" id="dock-btn" href="#s1">開始選擇</a>
+    <a class="btn btn-primary" id="dock-btn" href="#s1">開始填寫</a>
   </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <script>
 (function(){
-  // ===== 設定區（改價格或表單時只要改這裡） =====
-  const FORM = "https://docs.google.com/forms/d/e/1FAIpQLSfyvoTPEUpTuygxRZL-1R3Jgd7ffyZ2fv3lIOYCdHGGuxuE-w/viewform";
-  const ENTRY = {
-    lunch:    "entry.194434137",   // 午餐方式
-    idSelf:   "entry.1343722787",  // 報名身份（自備午餐）
-    idOrder:  "entry.1413043464",  // 報名身份（含代訂午餐）
-    line:     "entry.306632751"    // 加入 LINE 群組
-  };
-  const LUNCH = {
-    self:  {name:"自備午餐", add:0,   form:"自備午餐"},
-    order: {name:"代訂午餐", add:750, form:"請老師代訂午餐（$150/天 × 5天，加收$750）"}
-  };
-  // until：最後一天（含）；from：開始日（含）。日期以台灣時間判斷。
+  // ===== 設定區 =====
+  const API = "https://script.google.com/macros/s/AKfycbwie64DLfEWCTaN_5X2ZgOCodDyy1xwMHfmZTJ5Km7iFuplh5oCfMMmV7na3iERkDu3SQ/exec";
+  const FALLBACK_FORM = "https://docs.google.com/forms/d/e/1FAIpQLSfyvoTPEUpTuygxRZL-1R3Jgd7ffyZ2fv3lIOYCdHGGuxuE-w/viewform";
+  const LUNCH = { self:{name:"自備午餐", add:0}, order:{name:"代訂午餐", add:750} };
+  // until：最後一天（含）；from：開始日（含）。以台灣時間判斷；後端也會再檢查一次。
   const IDS = [
-    {k:"super", t:"超早鳥", d:"11/30 前報名繳費", price:8800, until:"2026-11-30",
-     fSelf:"超早鳥：11/30 前報名繳費（$8,800元/位）", fOrder:"超早鳥：11/30 前報名繳費（$9,550元/位，含午餐$750）"},
-    {k:"early", t:"早鳥", d:"12/1～12/31 報名繳費", price:9300, from:"2026-12-01", until:"2026-12-31",
-     fSelf:"早鳥：12/31 前報名繳費（$9,300元/位）", fOrder:"早鳥：12/31 前報名繳費（$10,050元/位，含午餐$750）"},
-    {k:"regular", t:"原價", d:"2027/1/1 起報名", price:9800, from:"2027-01-01",
-     fSelf:"原價：1/1 起報名（$9,800元/位）", fOrder:"原價：1/1 起報名（$10,550元/位，含午餐$750）"},
-    {k:"group", t:"團報優惠", d:"2 人（含）以上一起報名", price:8800,
-     note:"團報：請在報名表「團報請寫哪幾位學員是一起報名」填寫同行學員姓名，每位學員各填一份報名表。",
-     fSelf:"團報優惠：2人(含)以上（$8,800元/位）", fOrder:"團報優惠：2人(含)以上（$9,550元/位，含午餐$750）"},
-    {k:"nycu", t:"陽明交大教職員子女", d:"需於報名表上傳教職員證", price:8800,
-     note:"陽明交大教職員子女：報名表最後一頁需上傳教職員證。",
-     fSelf:"陽明交大教職員子女優惠（$8,800元/位）", fOrder:"陽明交大教職員子女優惠（$9,550元/位，含午餐$750）"},
-    {k:"fzt", t:"未來斑馬程式設計學苑學員", d:"學苑在學學員", price:8800,
-     fSelf:"未來斑馬程式設計學苑學員優惠（$8,800元/位）", fOrder:"未來斑馬程式設計學苑學員優惠（$9,550元/位，含午餐$750）"}
+    {k:"super",   t:"超早鳥", d:"11/30 前報名繳費", price:8800, until:"2026-11-30"},
+    {k:"early",   t:"早鳥",   d:"12/1～12/31 報名繳費", price:9300, from:"2026-12-01", until:"2026-12-31"},
+    {k:"regular", t:"原價",   d:"2027/1/1 起報名", price:9800, from:"2027-01-01"},
+    {k:"group",   t:"團報優惠", d:"2 人（含）以上一起報名", price:8800},
+    {k:"nycu",    t:"陽明交大教職員子女", d:"需上傳教職員證", price:8800},
+    {k:"fzt",     t:"未來斑馬程式設計學苑學員", d:"學苑在學學員", price:8800}
   ];
-  // ============================================
+  const MAX_FILE = 10 * 1024 * 1024;
+  const DRAFT_KEY = "camp2027-reg-draft";
+  // ==================
 
   const $ = s => document.querySelector(s);
+  const form = $("#reg");
   const money = n => "$" + n.toLocaleString("en-US");
   const today = new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Taipei",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
 
-  // build identity options
-  const box = $("#ids");
+  // identity cards
   IDS.forEach(o=>{
     const expired = o.until && today > o.until;
     const notYet  = o.from && today < o.from;
     const off = expired || notYet;
-    const startLabel = o.from ? (+o.from.slice(5,7)) + "/" + (+o.from.slice(8,10)) + " 起適用" : "";
-    const badge = expired ? '<span class="badge">已截止</span>' : notYet ? '<span class="badge">' + startLabel + '</span>' : (o.until ? '<span class="badge">限時</span>' : '');
+    const start = o.from ? (+o.from.slice(5,7)) + "/" + (+o.from.slice(8,10)) + " 起適用" : "";
+    const badge = expired ? '<span class="badge">已截止</span>' : notYet ? '<span class="badge">'+start+'</span>' : (o.until ? '<span class="badge">限時</span>' : '');
     const lab = document.createElement("label");
     lab.className = "opt" + (off ? " off" : "");
-    lab.innerHTML =
-      '<input type="radio" name="id" value="'+o.k+'"'+(off?' disabled':'')+'>'+
+    lab.innerHTML = '<input type="radio" name="ident" value="'+o.k+'"'+(off?' disabled':'')+'>'+
       '<span class="dot" aria-hidden="true"></span>'+
       '<span class="txt"><span class="t">'+o.t+badge+'</span><span class="d">'+o.d+'</span></span>'+
       '<span class="p">'+money(o.price)+'<small>/ 位</small></span>';
-    box.appendChild(lab);
+    $("#ids").appendChild(lab);
   });
 
-  const state = {id:null, lunch:null};
-  const paid = $("#paid"), joined = $("#joined");
+  const val = n => { const el = form.elements[n]; if (!el) return ""; if (el instanceof RadioNodeList) return el.value; return el.type === "checkbox" ? el.checked : el.value.trim(); };
+  let fileData = null; // {name,type,data}
+
+  // ---- validation rules ----
+  const rules = {
+    name:   () => !!val("name"),
+    birth:  () => /^\d{6,7}$/.test(val("birth")),
+    idno:   () => /^[A-Za-z][1289]\d{8}$/.test(val("idno")),
+    gender: () => !!val("gender"),
+    school: () => !!val("school"),
+    grade:  () => val("grade") && (val("grade") !== "__other" || !!val("gradeOther")),
+    parent: () => !!val("parent"),
+    phone:  () => val("phone").replace(/[^\d]/g,"").length >= 8,
+    ident:  () => !!val("ident"),
+    group:  () => val("ident") !== "group" || !!val("group"),
+    file:   () => val("ident") !== "nycu" || !!fileData,
+    lunch:  () => !!val("lunch"),
+    last5:  () => /^\d{5}$/.test(val("last5")),
+    joined: () => val("joined") === true
+  };
+  const fieldOf = {
+    name:"#name", birth:"#birth", idno:"#idno", gender:'[name=gender]', school:"#school", grade:"#grade",
+    parent:"#parent", phone:"#phone", ident:"#f-ident", group:"#f-group", file:"#f-file", lunch:"#f-lunch",
+    last5:"#last5", joined:"#joined"
+  };
+  const fieldBox = k => { const el = $(fieldOf[k]); return el && (el.classList.contains("field") ? el : el.closest(".field")); };
+  const touched = new Set();
+  function mark(k, force){
+    if (!force && !touched.has(k)) return;
+    const box = fieldBox(k); if (box) box.classList.toggle("bad", !rules[k]());
+  }
+  const stepKeys = { s1:["name","birth","idno","gender","school","grade"], s2:["parent","phone"], s3:["ident","group","file"], s4:["lunch"], s5:["last5"], s6:["joined"] };
 
   function update(){
-    const o = IDS.find(x=>x.k===state.id);
-    const l = state.lunch ? LUNCH[state.lunch] : null;
-    $("#c-id").textContent = o ? money(o.price) : "—";
+    const o = IDS.find(x=>x.k===val("ident"));
+    const l = LUNCH[val("lunch")];
     $("#c-id-l").textContent = o ? "營隊費用（" + o.t + "｜" + o.d + "）" : "營隊費用";
+    $("#c-id").textContent = o ? money(o.price) : "—";
     $("#c-lunch").textContent = l ? (l.add ? money(l.add) : "$0（自備）") : "—";
     const total = (o && l) ? o.price + l.add : null;
     $("#c-total").textContent = total ? money(total) : "—";
@@ -326,76 +480,164 @@ footer{color:var(--muted);font-size:14px;text-align:center;border-top:1px solid 
     $("#d-total").textContent = total ? money(total) : "$—";
     $("#d-desc").textContent = (o||l) ? [o?o.t:"未選身份", l?l.name:"未選午餐"].join("・") : "尚未選擇身份與午餐";
 
-    const note = $("#id-note");
-    note.hidden = !(o && o.note);
-    if (o && o.note) note.textContent = o.note;
+    $("#f-group").hidden = val("ident") !== "group";
+    $("#f-file").hidden = val("ident") !== "nycu";
+    $("#gradeOther").hidden = val("grade") !== "__other";
 
-    const done = {id:!!o, lunch:!!l, paid:paid.checked, joined:joined.checked};
-    $("#s1").classList.toggle("done", done.id);
-    $("#s2").classList.toggle("done", done.lunch);
-    $("#s3").classList.toggle("done", done.paid);
-    $("#s4").classList.toggle("done", done.joined);
-    document.querySelectorAll("[data-req]").forEach(el=>{
-      const s = el.closest(".step");
-      if (!el.dataset.orig) el.dataset.orig = el.textContent;
-      el.textContent = s.classList.contains("done") ? "已完成" : el.dataset.orig;
+    const paidOk = rules.last5();
+    $("#line-locked").hidden = paidOk;
+    $("#line-open").hidden = !paidOk;
+
+    Object.entries(stepKeys).forEach(([s,keys])=>{
+      const ok = keys.every(k=>rules[k]());
+      $("#"+s).classList.toggle("done", ok);
+      const req = $("#"+s+" [data-req]");
+      if (req){ if (!req.dataset.orig) req.dataset.orig = req.textContent; req.textContent = ok ? "已完成" : req.dataset.orig; }
     });
-    document.querySelectorAll("#todo li").forEach(li=>li.classList.toggle("ok", done[li.dataset.k]));
 
-    const all = done.id && done.lunch && done.paid && done.joined;
-    const go = $("#go");
-    if (all) {
-      const p = new URLSearchParams({usp:"pp_url"});
-      p.set(ENTRY.lunch, l.form);
-      p.set(state.lunch === "order" ? ENTRY.idOrder : ENTRY.idSelf, state.lunch === "order" ? o.fOrder : o.fSelf);
-      p.set(ENTRY.line, "我已加入");
-      go.href = FORM + "?" + p.toString();
-      go.target = "_blank"; go.rel = "noopener";
-      go.setAttribute("aria-disabled","false");
-    } else {
-      go.href = "#" + (!done.id ? "s1" : !done.lunch ? "s2" : !done.paid ? "s3" : "s4");
-      go.removeAttribute("target");
-      go.setAttribute("aria-disabled","true");
-    }
+    // summary
+    const g = val("grade") === "__other" ? val("gradeOther") : val("grade");
+    const rows = [
+      ["學員", [val("name"), g, val("school")].filter(Boolean).join("・") || "—"],
+      ["家長", [val("parent"), val("phone")].filter(Boolean).join("・") || "—"],
+      ["報名身份", o ? o.t : "—"],
+      ["午餐", l ? l.name : "—"],
+      ["應繳金額", total ? money(total) : "—"],
+      ["匯款後 5 碼", val("last5") || "—"]
+    ];
+    $("#summary").innerHTML = rows.map(r=>"<dt>"+r[0]+"</dt><dd>"+esc(r[1])+"</dd>").join("");
 
-    // dock button: next unfinished step
+    // dock
+    const next = Object.entries(stepKeys).find(([s,keys])=>!keys.every(k=>rules[k]()));
+    const labels = {s1:"填學員資料", s2:"填家長資料", s3:"選報名身份", s4:"選午餐", s5:"匯款", s6:"加入 LINE"};
     const db = $("#dock-btn");
-    if (all) { db.textContent = "前往報名表"; db.href = go.href; db.target = "_blank"; db.rel = "noopener"; }
-    else {
-      db.removeAttribute("target");
-      const next = !done.id ? ["s1","選擇身份"] : !done.lunch ? ["s2","選擇午餐"] : !done.paid ? ["s3","去匯款"] : ["s4","加入 LINE"];
-      db.href = "#" + next[0]; db.textContent = next[1];
+    if (next){ db.href = "#" + next[0]; db.textContent = labels[next[0]]; }
+    else { db.href = "#s7"; db.textContent = "確認送出"; }
+    if (!next && rules.ident() && rules.group() && rules.file() && $("#alert").dataset.kind === "invalid") $("#alert").hidden = true;
+    saveDraft();
+  }
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+  form.addEventListener("input", e=>{ if (e.target.name) { const k = e.target.name === "gradeOther" ? "grade" : e.target.name; if (k==="last5") e.target.value = e.target.value.replace(/\D/g,""); if (k==="birth") e.target.value = e.target.value.replace(/\D/g,""); mark(k); } update(); });
+  form.addEventListener("change", e=>{ const n = e.target.name; if (n){ const k = n === "gradeOther" ? "grade" : n; touched.add(k); mark(k); if (n==="ident"){ mark("group"); mark("file"); } } update(); });
+  form.addEventListener("focusout", e=>{ const n = e.target.name; if (n && rules[n]) { touched.add(n); mark(n); } });
+
+  // ---- file upload (images are resized before upload) ----
+  $("#file").addEventListener("change", async e=>{
+    const f = e.target.files[0]; fileData = null; $("#thumb").hidden = true;
+    const info = $("#file-info"), err = $("#file-err");
+    err.textContent = "請上傳教職員證";
+    if (!f) { info.textContent = "可拍照或上傳圖片／PDF，10MB 以內"; update(); return; }
+    info.textContent = "處理中…";
+    try {
+      let blob = f, name = f.name || "upload", type = f.type || "application/octet-stream";
+      if (/^image\//.test(type) && !/gif|svg/.test(type)) {
+        const r = await shrink(f).catch(()=>null);
+        if (r) { blob = r; type = "image/jpeg"; name = name.replace(/\.[^.]+$/,"") + ".jpg"; }
+      }
+      if (blob.size > MAX_FILE) throw new Error("檔案超過 10MB，請改拍一張照片或壓縮後再上傳");
+      const data = await new Promise((res,rej)=>{ const fr = new FileReader(); fr.onload = ()=>res(String(fr.result).split(",")[1]); fr.onerror = rej; fr.readAsDataURL(blob); });
+      fileData = {name, type, data};
+      info.innerHTML = "<b>✓ 已選擇</b> " + esc(f.name) + "（" + Math.max(1, Math.round(blob.size/1024)) + " KB）";
+      if (/^image\//.test(type)) { const t = $("#thumb"); t.src = URL.createObjectURL(blob); t.hidden = false; }
+    } catch(ex) {
+      info.textContent = "可拍照或上傳圖片／PDF，10MB 以內";
+      err.textContent = ex.message || "檔案讀取失敗，請再試一次";
+      e.target.value = "";
     }
+    touched.add("file"); mark("file"); update();
+  });
+  function shrink(file){
+    return new Promise((res,rej)=>{
+      const img = new Image(); const url = URL.createObjectURL(file);
+      img.onload = ()=>{
+        const max = 1800, s = Math.min(1, max / Math.max(img.width, img.height));
+        const c = document.createElement("canvas"); c.width = Math.round(img.width*s); c.height = Math.round(img.height*s);
+        c.getContext("2d").drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
+        c.toBlob(b => b ? res(b) : rej(), "image/jpeg", 0.85);
+      };
+      img.onerror = ()=>{ URL.revokeObjectURL(url); rej(); };
+      img.src = url;
+    });
   }
 
-  document.addEventListener("change", e=>{
-    if (e.target.name === "id") state.id = e.target.value;
-    if (e.target.name === "lunch") state.lunch = e.target.value;
-    update();
-  });
-
-  // copy account
+  // ---- copy account ----
   $("#copy").addEventListener("click", async ()=>{
-    const txt = "040035016963"; // 純數字，方便貼到網銀
     let ok = false;
-    try { await navigator.clipboard.writeText(txt); ok = true; } catch(e) {
-      try {
-        const r = document.createRange(); r.selectNodeContents($("#acct"));
-        const s = getSelection(); s.removeAllRanges(); s.addRange(r); ok = document.execCommand("copy");
-      } catch(_) {}
+    try { await navigator.clipboard.writeText("040035016963"); ok = true; } catch(e) {
+      try { const r = document.createRange(); r.selectNodeContents($("#acct")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); ok = document.execCommand("copy"); } catch(_) {}
     }
     const b = $("#copy"); b.textContent = ok ? "已複製" : "請長按帳號複製";
     setTimeout(()=>{ b.textContent = "複製帳號"; }, 2000);
   });
 
-  // LINE QR
-  try {
-    if (window.qrcode) {
-      const qr = qrcode(0, "M"); qr.addData($("#line-btn").href); qr.make();
-      const q = $("#qr"); q.innerHTML = qr.createSvgTag({cellSize:4, margin:0, scalable:true}); q.hidden = false;
-    }
-  } catch(e) {}
+  // ---- LINE QR ----
+  try { if (window.qrcode) { const qr = qrcode(0,"M"); qr.addData($("#line-btn").href); qr.make(); const q = $("#qr"); q.innerHTML = qr.createSvgTag({cellSize:4, margin:0, scalable:true}); q.hidden = false; } } catch(e) {}
 
+  // ---- draft (this browser only; no ID number or file) ----
+  const DRAFT_FIELDS = ["name","birth","gender","school","grade","gradeOther","parent","phone","ident","group","lunch","last5"];
+  function saveDraft(){
+    try { const d = {}; DRAFT_FIELDS.forEach(k=>d[k]=val(k)); localStorage.setItem(DRAFT_KEY, JSON.stringify(d)); } catch(e) {}
+  }
+  function loadDraft(){
+    try {
+      const d = JSON.parse(localStorage.getItem(DRAFT_KEY) || "null"); if (!d) return;
+      DRAFT_FIELDS.forEach(k=>{
+        const el = form.elements[k]; if (!el || d[k] == null || d[k] === "") return;
+        if (el instanceof RadioNodeList) { const r = [...el].find(x=>x.value===d[k] && !x.disabled); if (r) r.checked = true; }
+        else el.value = d[k];
+      });
+    } catch(e) {}
+  }
+
+  // ---- submit ----
+  form.addEventListener("submit", async e=>{
+    e.preventDefault();
+    Object.keys(rules).forEach(k=>{ touched.add(k); mark(k, true); });
+    update();
+    const firstBad = Object.keys(rules).find(k=>!rules[k]());
+    const alert = $("#alert");
+    if (firstBad) {
+      alert.textContent = "還有資料未完成，請檢查標示紅色的欄位。"; alert.dataset.kind = "invalid"; alert.hidden = false;
+      const box = fieldBox(firstBad); if (box) { box.scrollIntoView({block:"center"}); const inp = box.querySelector("input,select,textarea"); inp && inp.focus({preventScroll:true}); }
+      return;
+    }
+    alert.hidden = true;
+    const btn = $("#submit"); btn.disabled = true; btn.textContent = "送出中，請稍候…";
+    const payload = {
+      website: form.elements.website.value,
+      name: val("name"), birth: val("birth"), idno: val("idno").toUpperCase(), gender: val("gender"),
+      school: val("school"), grade: val("grade") === "__other" ? val("gradeOther") : val("grade"),
+      parent: val("parent"), phone: val("phone"),
+      ident: val("ident"), group: val("ident") === "group" ? val("group") : "",
+      lunch: val("lunch"), last5: val("last5"), lineJoined: true,
+      file: val("ident") === "nycu" ? fileData : null
+    };
+    if (new URLSearchParams(location.search).has("dryrun")) payload.dryRun = true; // 測試用：只檢查不寫入
+    try {
+      const ctrl = new AbortController(); const timer = setTimeout(()=>ctrl.abort(), 90000);
+      const r = await fetch(API, {method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"}, body:JSON.stringify(payload), signal:ctrl.signal});
+      clearTimeout(timer);
+      const res = await r.json();
+      if (!res.ok) throw new Error(res.error || "送出失敗");
+      showDone(res.amount);
+    } catch(ex) {
+      alert.dataset.kind = "error";
+      alert.innerHTML = esc(ex.name === "AbortError" ? "連線逾時，請稍後再試。" : (ex.message || "送出失敗，請稍後再試。")) +
+        '<br>若一直無法送出，請來電 <span class="num">(03)540-3463</span>，或改用 <a href="'+FALLBACK_FORM+'" target="_blank" rel="noopener">Google 報名表</a>。';
+      alert.hidden = false;
+      btn.disabled = false; btn.textContent = "送出報名";
+    }
+  });
+
+  function showDone(amount){
+    $("#done-summary").innerHTML = $("#summary").innerHTML.replace(/<dt>應繳金額<\/dt><dd>[^<]*<\/dd>/, "<dt>應繳金額</dt><dd>"+money(amount)+"</dd>");
+    try { localStorage.removeItem(DRAFT_KEY); } catch(e) {}
+    $("#main").hidden = true; $("#dock").hidden = true; $("#done").hidden = false;
+    window.scrollTo(0,0); $("#done-card").focus({preventScroll:true});
+  }
+
+  loadDraft();
   update();
 })();
 </script>
