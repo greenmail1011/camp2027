@@ -273,7 +273,7 @@ footer{color:var(--muted);font-size:14px;text-align:center;border-top:1px solid 
   const IDS = [
     {k:"super", t:"超早鳥", d:"11/30 前報名繳費", price:8800, until:"2026-11-30",
      fSelf:"超早鳥：11/30 前報名繳費（$8,800元/位）", fOrder:"超早鳥：11/30 前報名繳費（$9,550元/位，含午餐$750）"},
-    {k:"early", t:"早鳥", d:"12/31 前報名繳費", price:9300, until:"2026-12-31",
+    {k:"early", t:"早鳥", d:"12/1～12/31 報名繳費", price:9300, from:"2026-12-01", until:"2026-12-31",
      fSelf:"早鳥：12/31 前報名繳費（$9,300元/位）", fOrder:"早鳥：12/31 前報名繳費（$10,050元/位，含午餐$750）"},
     {k:"regular", t:"原價", d:"2027/1/1 起報名", price:9800, from:"2027-01-01",
      fSelf:"原價：1/1 起報名（$9,800元/位）", fOrder:"原價：1/1 起報名（$10,550元/位，含午餐$750）"},
@@ -298,7 +298,8 @@ footer{color:var(--muted);font-size:14px;text-align:center;border-top:1px solid 
     const expired = o.until && today > o.until;
     const notYet  = o.from && today < o.from;
     const off = expired || notYet;
-    const badge = expired ? '<span class="badge">已截止</span>' : notYet ? '<span class="badge">1/1 起適用</span>' : (o.until ? '<span class="badge">限時</span>' : '');
+    const startLabel = o.from ? (+o.from.slice(5,7)) + "/" + (+o.from.slice(8,10)) + " 起適用" : "";
+    const badge = expired ? '<span class="badge">已截止</span>' : notYet ? '<span class="badge">' + startLabel + '</span>' : (o.until ? '<span class="badge">限時</span>' : '');
     const lab = document.createElement("label");
     lab.className = "opt" + (off ? " off" : "");
     lab.innerHTML =
@@ -316,7 +317,7 @@ footer{color:var(--muted);font-size:14px;text-align:center;border-top:1px solid 
     const o = IDS.find(x=>x.k===state.id);
     const l = state.lunch ? LUNCH[state.lunch] : null;
     $("#c-id").textContent = o ? money(o.price) : "—";
-    $("#c-id-l").textContent = o ? "營隊費用（" + o.t + "）" : "營隊費用";
+    $("#c-id-l").textContent = o ? "營隊費用（" + o.t + "｜" + o.d + "）" : "營隊費用";
     $("#c-lunch").textContent = l ? (l.add ? money(l.add) : "$0（自備）") : "—";
     const total = (o && l) ? o.price + l.add : null;
     $("#c-total").textContent = total ? money(total) : "—";
