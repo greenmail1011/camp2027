@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>報名費用試算｜2027 AI創客無人機冬令營</title>
+<meta name="description" content="選擇報名身份與午餐方式，自動計算應繳金額，完成匯款與加入 LINE 群組後填寫報名表。">
+<meta property="og:title" content="報名費用試算｜2027 AI創客無人機冬令營">
+<meta property="og:image" content="https://greenmail1011.github.io/camp2027/dm.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Chakra+Petch:wght@600;700&display=swap">
+<style>
+:root{
+  --bg:#F3F8FC; --sky:#DDF1F8; --panel:#FFFFFF; --panel-2:#EAF4FA;
+  --text:#10233B; --muted:#4A5D74;
+  --line:#0A7A9A; --line-soft:#A9DCEB;
+  --cta:#FFC928; --cta-hover:#FFD95E; --hot:#C2410C;
+  --border:#CFE3EE; --ink:#10233B; --ok:#15803D;
+  --f-body:"Noto Sans TC",system-ui,-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;
+  --f-num:"Chakra Petch","Noto Sans TC",system-ui,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--f-body);font-size:16px;line-height:1.65;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 120px}
+a{color:var(--line)}
+:focus-visible{outline:3px solid var(--line);outline-offset:3px;border-radius:4px}
+h1,h2,h3{margin:0;line-height:1.3;text-wrap:balance}
+p{margin:0;text-wrap:pretty}
+.num{font-family:var(--f-num);font-variant-numeric:tabular-nums}
+.wrap{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+
+/* top bar */
+.top{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.96);border-bottom:1px solid var(--border);
+  margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px)));padding:10px max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px))}
+.top-in{max-width:760px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{font-weight:900;font-size:15px;letter-spacing:.04em;text-decoration:none;color:var(--text)}
+.brand .num{color:var(--line)}
+.back{font-size:14px;font-weight:700;text-decoration:none;white-space:nowrap}
+
+/* intro */
+.intro{margin-top:20px;padding:22px 18px;border-radius:16px;background:var(--sky);border:1px solid var(--line-soft);display:flex;flex-direction:column;gap:8px}
+.intro h1{font-size:clamp(24px,6.4vw,32px);font-weight:900;letter-spacing:.04em}
+.intro p{color:var(--muted)}
+.flow{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.flow li{background:var(--panel);border:1px solid var(--line-soft);border-radius:999px;padding:3px 12px;font-size:14px;font-weight:700}
+.flow .num{color:var(--line);margin-right:4px}
+
+/* steps */
+.step{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:20px 18px;display:flex;flex-direction:column;gap:14px}
+.step-h{display:flex;align-items:center;gap:12px}
+.step-h .n{flex:0 0 34px;height:34px;border-radius:8px;background:var(--line);color:#FFFFFF;font-family:var(--f-num);font-weight:700;display:flex;align-items:center;justify-content:center}
+.step.done .step-h .n{background:var(--ok)}
+.step-h h2{font-size:20px;font-weight:900;letter-spacing:.06em}
+.step-h .req{margin-left:auto;font-size:13px;font-weight:700;color:var(--hot);white-space:nowrap}
+.step.done .step-h .req{color:var(--ok)}
+.hint{color:var(--muted);font-size:15px}
+
+/* option cards */
+.opts{display:grid;gap:10px}
+.opt{position:relative;display:flex;align-items:center;gap:12px;padding:14px 14px;border:2px solid var(--border);border-radius:12px;background:var(--panel);cursor:pointer;min-height:64px}
+.opt:hover{border-color:var(--line-soft)}
+.opt input{position:absolute;opacity:0;pointer-events:none}
+.opt .dot{flex:0 0 22px;height:22px;border-radius:50%;border:2px solid var(--line-soft);background:#FFFFFF;display:flex;align-items:center;justify-content:center}
+.opt .txt{flex:1 1 auto;min-width:0;display:flex;flex-direction:column}
+.opt .t{font-weight:900}
+.opt .d{color:var(--muted);font-size:14px;line-height:1.45}
+.opt .p{flex:0 0 auto;font-family:var(--f-num);font-weight:700;font-size:20px;text-align:right;line-height:1.2}
+.opt .p small{display:block;font-family:var(--f-body);font-size:12px;font-weight:700;color:var(--muted)}
+.opt input:checked ~ .dot{border-color:var(--line);background:var(--line);box-shadow:inset 0 0 0 4px #FFFFFF}
+.opt:has(input:checked){border-color:var(--line);background:var(--panel-2)}
+.opt input:focus-visible ~ .dot{outline:3px solid var(--line);outline-offset:3px}
+.opt.off{cursor:not-allowed;background:#F5F7F9;border-style:dashed}
+.opt.off .t,.opt.off .p{color:#8A98A8}
+.opt .badge{display:inline-block;margin-left:6px;font-size:12px;font-weight:700;color:var(--hot);border:1.5px solid var(--hot);border-radius:4px;padding:0 5px;vertical-align:2px}
+.opt.off .badge{color:#8A98A8;border-color:#B8C3CE}
+.callout{background:#FFF4CC;border:1px solid #E5AE00;border-radius:10px;padding:10px 14px;font-size:15px;font-weight:700}
+
+/* total */
+.total{border:2px solid var(--line);background:var(--panel-2)}
+.calc{margin:0;display:grid;grid-template-columns:1fr auto;row-gap:8px}
+.calc dt,.calc dd{margin:0}
+.calc dt{color:var(--muted)}
+.calc dd{font-family:var(--f-num);font-weight:700;text-align:right}
+.calc .sum{border-top:2px solid var(--line-soft);padding-top:10px;color:var(--text);font-weight:900;font-size:18px}
+.calc dd.sum{font-size:32px;color:var(--hot);line-height:1.1}
+
+/* bank */
+.bank{margin:0;display:grid;grid-template-columns:auto 1fr;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.bank dt,.bank dd{margin:0;padding:10px 14px;border-bottom:1px solid var(--border)}
+.bank dt{background:var(--panel-2);color:var(--line);font-weight:700;white-space:nowrap}
+.bank dd{min-width:0;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.bank dt:last-of-type,.bank dd:last-of-type{border-bottom:0}
+.acct{font-family:var(--f-num);font-weight:700;font-size:20px;letter-spacing:.04em;user-select:all}
+.amt-due{font-family:var(--f-num);font-weight:700;font-size:20px;color:var(--hot)}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 22px;border-radius:8px;
+  font-family:inherit;font-weight:900;font-size:17px;letter-spacing:.08em;text-decoration:none;border:2px solid transparent;cursor:pointer}
+.btn-primary{background:var(--cta);color:var(--ink);border-color:#E5AE00}
+.btn-primary:hover{background:var(--cta-hover)}
+.btn-line{background:#06C755;color:#FFFFFF;border-color:#05A847}
+.btn-line:hover{background:#05B34C}
+.btn-ghost{border-color:var(--line);color:var(--line);background:var(--panel)}
+.btn-sm{min-height:36px;padding:0 12px;font-size:14px;letter-spacing:.04em}
+.btn[aria-disabled="true"]{background:#E3E8EE;border-color:#CDD5DE;color:#7C8A9A;cursor:not-allowed}
+.btn-block{width:100%}
+
+/* checks */
+.check{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border:2px solid var(--border);border-radius:10px;cursor:pointer;font-weight:700}
+.check input{width:22px;height:22px;margin:2px 0 0;accent-color:var(--ok);flex:0 0 auto}
+.check:has(input:checked){border-color:var(--ok);background:#EEF8F1}
+.check small{display:block;font-weight:400;color:var(--muted);font-size:14px}
+
+.line-box{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.qr{width:132px;height:132px;border:1px solid var(--border);border-radius:10px;padding:6px;background:#FFFFFF;flex:0 0 auto}
+.qr svg{display:block;width:100%;height:100%}
+.line-txt{flex:1 1 200px;display:flex;flex-direction:column;gap:10px;min-width:0}
+
+/* finish */
+.finish{border:2px solid #E5AE00;background:#FFF8DD}
+.todo{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;font-size:15px}
+.todo li{display:flex;gap:8px;align-items:center}
+.todo .mk{flex:0 0 20px;height:20px;border-radius:50%;border:2px solid #B8C3CE;display:flex;align-items:center;justify-content:center;font-size:12px;color:#FFFFFF}
+.todo li.ok .mk{background:var(--ok);border-color:var(--ok)}
+.todo li.ok{color:var(--ok);font-weight:700}
+
+footer{color:var(--muted);font-size:14px;text-align:center;border-top:1px solid var(--border);padding-top:20px}
+
+/* dock */
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(255,255,255,.97);border-top:1px solid var(--border);box-shadow:0 -4px 16px rgba(16,35,59,.06);
+  padding:10px max(16px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.dock-in{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.dock-sum{flex:1 1 auto;min-width:0;line-height:1.3}
+.dock-sum small{display:block;color:var(--muted);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dock-sum b{font-family:var(--f-num);font-size:24px;color:var(--hot)}
+.dock .btn{flex:0 0 auto}
+@media (max-width:380px){.opt .p{font-size:18px}.dock .btn{padding:0 14px}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-in">
+    <a class="brand" href="index.html"><span class="num">2027</span> AI創客無人機冬令營</a>
+    <a class="back" href="index.html">← 回營隊介紹</a>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="intro" aria-labelledby="t">
+    <h1 id="t">報名費用試算</h1>
+    <p>選好報名身份和午餐方式，應繳金額會自動算出來。完成匯款、加入 LINE 群組後，再填寫報名表即完成報名。</p>
+    <ol class="flow">
+      <li><span class="num">1</span>選身份</li>
+      <li><span class="num">2</span>選午餐</li>
+      <li><span class="num">3</span>匯款</li>
+      <li><span class="num">4</span>加入 LINE</li>
+      <li><span class="num">5</span>填報名表</li>
+    </ol>
+  </section>
+
+  <!-- step 1 -->
+  <section class="step" id="s1" aria-labelledby="h1">
+    <div class="step-h"><span class="n">1</span><h2 id="h1">報名身份</h2><span class="req" data-req>擇一・必選</span></div>
+    <p class="hint">優惠不可重複，請選一項最符合的身份。</p>
+    <div class="opts" id="ids" role="radiogroup" aria-labelledby="h1"></div>
+    <p class="callout" id="id-note" hidden></p>
+  </section>
+
+  <!-- step 2 -->
+  <section class="step" id="s2" aria-labelledby="h2">
+    <div class="step-h"><span class="n">2</span><h2 id="h2">午餐方式</h2><span class="req" data-req>必選</span></div>
+    <div class="opts" role="radiogroup" aria-labelledby="h2">
+      <label class="opt">
+        <input type="radio" name="lunch" value="self">
+        <span class="dot" aria-hidden="true"></span>
+        <span class="txt"><span class="t">自備午餐</span><span class="d">每天自行準備午餐</span></span>
+        <span class="p">+$0</span>
+      </label>
+      <label class="opt">
+        <input type="radio" name="lunch" value="order">
+        <span class="dot" aria-hidden="true"></span>
+        <span class="txt"><span class="t">請老師代訂午餐</span><span class="d">每天 <span class="num">$150</span> × <span class="num">5</span> 天</span></span>
+        <span class="p">+$750</span>
+      </label>
+    </div>
+  </section>
+
+  <!-- total -->
+  <section class="step total" aria-labelledby="h-total" aria-live="polite">
+    <h2 id="h-total" style="font-size:18px;font-weight:900;letter-spacing:.06em">應繳金額</h2>
+    <dl class="calc">
+      <dt id="c-id-l">營隊費用</dt><dd id="c-id">—</dd>
+      <dt>午餐</dt><dd id="c-lunch">—</dd>
+      <dt class="sum">合計</dt><dd class="sum" id="c-total">—</dd>
+    </dl>
+    <p class="hint" id="c-hint">請先完成上面兩項選擇。</p>
+  </section>
+
+  <!-- step 3 -->
+  <section class="step" id="s3" aria-labelledby="h3">
+    <div class="step-h"><span class="n">3</span><h2 id="h3">匯款繳費</h2><span class="req" data-req>必做</span></div>
+    <dl class="bank">
+      <dt>戶名</dt><dd>新竹市無人機創新科技協會</dd>
+      <dt>銀行</dt><dd>國泰世華銀行 新竹分行（代號 <span class="num">013</span>）</dd>
+      <dt>帳號</dt><dd><span class="acct" id="acct">040-03-501696-3</span><button type="button" class="btn btn-ghost btn-sm" id="copy">複製帳號</button></dd>
+      <dt>金額</dt><dd><span class="amt-due" id="due">請先選擇身份與午餐</span></dd>
+    </dl>
+    <p class="hint">依繳費順序確認名額。匯款後請記下<b>匯款帳號後 <span class="num">5</span> 碼</b>，報名表會用到。</p>
+    <label class="check"><input type="checkbox" id="paid"><span>我已完成匯款，並記下帳號後 <span class="num">5</span> 碼<small>報名表會請你填寫，方便我們查核入帳</small></span></label>
+  </section>
+
+  <!-- step 4 -->
+  <section class="step" id="s4" aria-labelledby="h4">
+    <div class="step-h"><span class="n">4</span><h2 id="h4">加入 LINE 群組</h2><span class="req" data-req>必做</span></div>
+    <div class="line-box">
+      <div class="qr" id="qr" aria-label="LINE 群組 QR code" role="img" hidden></div>
+      <div class="line-txt">
+        <p class="hint">營隊通知與行前說明都會在群組公告。手機請直接點按鈕；用電腦請以手機掃描 QR code。</p>
+        <a class="btn btn-line" id="line-btn" href="https://line.me/ti/g/mHkhwADwhv" target="_blank" rel="noopener">開啟 LINE 加入群組</a>
+      </div>
+    </div>
+    <label class="check"><input type="checkbox" id="joined"><span>我已加入 LINE 群組</span></label>
+  </section>
+
+  <!-- step 5 -->
+  <section class="step finish" id="s5" aria-labelledby="h5">
+    <div class="step-h"><span class="n">5</span><h2 id="h5">填寫報名表，完成報名</h2></div>
+    <ul class="todo" id="todo">
+      <li data-k="id"><span class="mk" aria-hidden="true">✓</span>選擇報名身份</li>
+      <li data-k="lunch"><span class="mk" aria-hidden="true">✓</span>選擇午餐方式</li>
+      <li data-k="paid"><span class="mk" aria-hidden="true">✓</span>完成匯款</li>
+      <li data-k="joined"><span class="mk" aria-hidden="true">✓</span>加入 LINE 群組</li>
+    </ul>
+    <a class="btn btn-primary btn-block" id="go" href="#s1" aria-disabled="true">前往填寫報名表</a>
+    <p class="hint" id="go-hint">完成以上 <span class="num">4</span> 項後即可前往。報名表會自動帶入你選的身份與午餐，只要填寫學員、家長資料與匯款帳號後 <span class="num">5</span> 碼，送出後即完成報名。</p>
+  </section>
+
+  <footer>
+    <p>報名諮詢：<span class="num" style="user-select:all">(03)540-3463</span></p>
+    <p>主辦單位：國立陽明交通大學人工智慧專責辦公室、新竹市無人機創新科技協會</p>
+  </footer>
+</main>
+
+<div class="dock" role="region" aria-label="應繳金額">
+  <div class="dock-in">
+    <div class="dock-sum"><small id="d-desc">尚未選擇身份與午餐</small><b id="d-total">$—</b></div>
+    <a class="btn btn-primary" id="dock-btn" href="#s1">開始選擇</a>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script>
+(function(){
+  // ===== 設定區（改價格或表單時只要改這裡） =====
+  const FORM = "https://docs.google.com/forms/d/e/1FAIpQLSfyvoTPEUpTuygxRZL-1R3Jgd7ffyZ2fv3lIOYCdHGGuxuE-w/viewform";
+  const ENTRY = {
+    lunch:    "entry.194434137",   // 午餐方式
+    idSelf:   "entry.1343722787",  // 報名身份（自備午餐）
+    idOrder:  "entry.1413043464",  // 報名身份（含代訂午餐）
+    line:     "entry.306632751"    // 加入 LINE 群組
+  };
+  const LUNCH = {
+    self:  {name:"自備午餐", add:0,   form:"自備午餐"},
+    order: {name:"代訂午餐", add:750, form:"請老師代訂午餐（$150/天 × 5天，加收$750）"}
+  };
+  // until：最後一天（含）；from：開始日（含）。日期以台灣時間判斷。
+  const IDS = [
+    {k:"super", t:"超早鳥", d:"11/30 前報名繳費", price:8800, until:"2026-11-30",
+     fSelf:"超早鳥：11/30 前報名繳費（$8,800元/位）", fOrder:"超早鳥：11/30 前報名繳費（$9,550元/位，含午餐$750）"},
+    {k:"early", t:"早鳥", d:"12/31 前報名繳費", price:9300, until:"2026-12-31",
+     fSelf:"早鳥：12/31 前報名繳費（$9,300元/位）", fOrder:"早鳥：12/31 前報名繳費（$10,050元/位，含午餐$750）"},
+    {k:"regular", t:"原價", d:"2027/1/1 起報名", price:9800, from:"2027-01-01",
+     fSelf:"原價：1/1 起報名（$9,800元/位）", fOrder:"原價：1/1 起報名（$10,550元/位，含午餐$750）"},
+    {k:"group", t:"團報優惠", d:"2 人（含）以上一起報名", price:8800,
+     note:"團報：請在報名表「團報請寫哪幾位學員是一起報名」填寫同行學員姓名，每位學員各填一份報名表。",
+     fSelf:"團報優惠：2人(含)以上（$8,800元/位）", fOrder:"團報優惠：2人(含)以上（$9,550元/位，含午餐$750）"},
+    {k:"nycu", t:"陽明交大教職員子女", d:"需於報名表上傳教職員證", price:8800,
+     note:"陽明交大教職員子女：報名表最後一頁需上傳教職員證。",
+     fSelf:"陽明交大教職員子女優惠（$8,800元/位）", fOrder:"陽明交大教職員子女優惠（$9,550元/位，含午餐$750）"},
+    {k:"fzt", t:"未來斑馬程式設計學苑學員", d:"學苑在學學員", price:8800,
+     fSelf:"未來斑馬程式設計學苑學員優惠（$8,800元/位）", fOrder:"未來斑馬程式設計學苑學員優惠（$9,550元/位，含午餐$750）"}
+  ];
+  // ============================================
+
+  const $ = s => document.querySelector(s);
+  const money = n => "$" + n.toLocaleString("en-US");
+  const today = new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Taipei",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
+
+  // build identity options
+  const box = $("#ids");
+  IDS.forEach(o=>{
+    const expired = o.until && today > o.until;
+    const notYet  = o.from && today < o.from;
+    const off = expired || notYet;
+    const badge = expired ? '<span class="badge">已截止</span>' : notYet ? '<span class="badge">1/1 起適用</span>' : (o.until ? '<span class="badge">限時</span>' : '');
+    const lab = document.createElement("label");
+    lab.className = "opt" + (off ? " off" : "");
+    lab.innerHTML =
+      '<input type="radio" name="id" value="'+o.k+'"'+(off?' disabled':'')+'>'+
+      '<span class="dot" aria-hidden="true"></span>'+
+      '<span class="txt"><span class="t">'+o.t+badge+'</span><span class="d">'+o.d+'</span></span>'+
+      '<span class="p">'+money(o.price)+'<small>/ 位</small></span>';
+    box.appendChild(lab);
+  });
+
+  const state = {id:null, lunch:null};
+  const paid = $("#paid"), joined = $("#joined");
+
+  function update(){
+    const o = IDS.find(x=>x.k===state.id);
+    const l = state.lunch ? LUNCH[state.lunch] : null;
+    $("#c-id").textContent = o ? money(o.price) : "—";
+    $("#c-id-l").textContent = o ? "營隊費用（" + o.t + "）" : "營隊費用";
+    $("#c-lunch").textContent = l ? (l.add ? money(l.add) : "$0（自備）") : "—";
+    const total = (o && l) ? o.price + l.add : null;
+    $("#c-total").textContent = total ? money(total) : "—";
+    $("#c-hint").hidden = !!total;
+    $("#due").textContent = total ? money(total) : "請先選擇身份與午餐";
+    $("#d-total").textContent = total ? money(total) : "$—";
+    $("#d-desc").textContent = (o||l) ? [o?o.t:"未選身份", l?l.name:"未選午餐"].join("・") : "尚未選擇身份與午餐";
+
+    const note = $("#id-note");
+    note.hidden = !(o && o.note);
+    if (o && o.note) note.textContent = o.note;
+
+    const done = {id:!!o, lunch:!!l, paid:paid.checked, joined:joined.checked};
+    $("#s1").classList.toggle("done", done.id);
+    $("#s2").classList.toggle("done", done.lunch);
+    $("#s3").classList.toggle("done", done.paid);
+    $("#s4").classList.toggle("done", done.joined);
+    document.querySelectorAll("[data-req]").forEach(el=>{
+      const s = el.closest(".step");
+      if (!el.dataset.orig) el.dataset.orig = el.textContent;
+      el.textContent = s.classList.contains("done") ? "已完成" : el.dataset.orig;
+    });
+    document.querySelectorAll("#todo li").forEach(li=>li.classList.toggle("ok", done[li.dataset.k]));
+
+    const all = done.id && done.lunch && done.paid && done.joined;
+    const go = $("#go");
+    if (all) {
+      const p = new URLSearchParams({usp:"pp_url"});
+      p.set(ENTRY.lunch, l.form);
+      p.set(state.lunch === "order" ? ENTRY.idOrder : ENTRY.idSelf, state.lunch === "order" ? o.fOrder : o.fSelf);
+      p.set(ENTRY.line, "我已加入");
+      go.href = FORM + "?" + p.toString();
+      go.target = "_blank"; go.rel = "noopener";
+      go.setAttribute("aria-disabled","false");
+    } else {
+      go.href = "#" + (!done.id ? "s1" : !done.lunch ? "s2" : !done.paid ? "s3" : "s4");
+      go.removeAttribute("target");
+      go.setAttribute("aria-disabled","true");
+    }
+
+    // dock button: next unfinished step
+    const db = $("#dock-btn");
+    if (all) { db.textContent = "前往報名表"; db.href = go.href; db.target = "_blank"; db.rel = "noopener"; }
+    else {
+      db.removeAttribute("target");
+      const next = !done.id ? ["s1","選擇身份"] : !done.lunch ? ["s2","選擇午餐"] : !done.paid ? ["s3","去匯款"] : ["s4","加入 LINE"];
+      db.href = "#" + next[0]; db.textContent = next[1];
+    }
+  }
+
+  document.addEventListener("change", e=>{
+    if (e.target.name === "id") state.id = e.target.value;
+    if (e.target.name === "lunch") state.lunch = e.target.value;
+    update();
+  });
+
+  // copy account
+  $("#copy").addEventListener("click", async ()=>{
+    const txt = "040035016963"; // 純數字，方便貼到網銀
+    let ok = false;
+    try { await navigator.clipboard.writeText(txt); ok = true; } catch(e) {
+      try {
+        const r = document.createRange(); r.selectNodeContents($("#acct"));
+        const s = getSelection(); s.removeAllRanges(); s.addRange(r); ok = document.execCommand("copy");
+      } catch(_) {}
+    }
+    const b = $("#copy"); b.textContent = ok ? "已複製" : "請長按帳號複製";
+    setTimeout(()=>{ b.textContent = "複製帳號"; }, 2000);
+  });
+
+  // LINE QR
+  try {
+    if (window.qrcode) {
+      const qr = qrcode(0, "M"); qr.addData($("#line-btn").href); qr.make();
+      const q = $("#qr"); q.innerHTML = qr.createSvgTag({cellSize:4, margin:0, scalable:true}); q.hidden = false;
+    }
+  } catch(e) {}
+
+  update();
+})();
+</script>
+</body>
+</html>
