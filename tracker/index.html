@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>2027 AI創客無人機冬令營｜FB 社團分享追蹤</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#fff; --ink:#1d2430; --mute:#667085; --line:#e4e7ec;
+    --ok:#12805c; --ok-bg:#e3f5ee;
+    --wait:#a15c00; --wait-bg:#fdf1db;
+    --pend:#2f5fd0; --pend-bg:#e6edfc;
+    --skip:#667085; --skip-bg:#eef0f3;
+    --bad:#b42318; --bad-bg:#fde8e6;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 -apple-system,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif}
+  header{padding:22px 20px 8px;max-width:1100px;margin:0 auto}
+  h1{font-size:21px;margin:0 0 4px}
+  .sub{color:var(--mute);font-size:13px}
+  main{max-width:1100px;margin:0 auto;padding:8px 20px 48px}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:14px 0 18px}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+  .stat b{display:block;font-size:26px;line-height:1.1}
+  .stat span{color:var(--mute);font-size:13px}
+  .stat.ok b{color:var(--ok)} .stat.pend b{color:var(--pend)} .stat.wait b{color:var(--wait)} .stat.skip b{color:var(--skip)}
+  h2{font-size:16px;margin:24px 0 10px}
+  .days{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+  .day{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;cursor:pointer}
+  .day.on{border-color:var(--pend);box-shadow:0 0 0 2px var(--pend-bg)}
+  .day h3{margin:0 0 6px;font-size:14px}
+  .bar{display:flex;height:8px;border-radius:99px;overflow:hidden;background:var(--skip-bg)}
+  .bar i{display:block}
+  .day small{color:var(--mute);font-size:12px;display:block;margin-top:6px}
+  .tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0 12px}
+  .chip{border:1px solid var(--line);background:var(--card);border-radius:99px;padding:5px 12px;font-size:13px;cursor:pointer;user-select:none}
+  .chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+  input[type=search]{flex:1;min-width:160px;border:1px solid var(--line);border-radius:8px;padding:7px 10px;font:inherit;background:var(--card)}
+  .tablewrap{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:auto}
+  table{border-collapse:collapse;width:100%;min-width:720px}
+  th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:12px;color:var(--mute);font-weight:600;background:#fafbfc;position:sticky;top:0}
+  tr:last-child td{border-bottom:0}
+  .tag{display:inline-block;border-radius:6px;padding:1px 8px;font-size:12px;font-weight:600;white-space:nowrap}
+  .tag.ok{background:var(--ok-bg);color:var(--ok)}
+  .tag.pend{background:var(--pend-bg);color:var(--pend)}
+  .tag.wait{background:var(--wait-bg);color:var(--wait)}
+  .tag.skip{background:var(--skip-bg);color:var(--skip)}
+  .tag.bad{background:var(--bad-bg);color:var(--bad)}
+  .src{color:var(--mute);font-size:12px;white-space:nowrap}
+  .note{color:var(--mute);font-size:13px}
+  .how{background:var(--card);border:1px dashed var(--line);border-radius:12px;padding:12px 16px;color:var(--mute);font-size:13px}
+  .how code{background:var(--skip-bg);padding:1px 5px;border-radius:4px;font-size:12px}
+  footer{max-width:1100px;margin:0 auto;padding:0 20px 28px;color:var(--mute);font-size:12px}
+</style>
+</head>
+<body>
+<header>
+  <h1>2027 AI創客無人機冬令營｜FB 社團分享追蹤</h1>
+  <div class="sub">每天只要在下方 <code>DATA.entries</code> 加幾行並 push，頁面就會自動更新。最後更新：<span id="updated"></span></div>
+</header>
+<main>
+  <div class="cards" id="cards"></div>
+
+  <h2>每日進度（點日期可篩選）</h2>
+  <div class="days" id="days"></div>
+
+  <h2>社團明細</h2>
+  <div class="tools">
+    <span class="chip on" data-st="all">全部</span>
+    <span class="chip" data-st="已發佈">已發佈</span>
+    <span class="chip" data-st="待審核">待管理員審核</span>
+    <span class="chip" data-st="等入社">等入社批准</span>
+    <span class="chip" data-st="跳過">跳過／無法分享</span>
+    <input type="search" id="q" placeholder="搜尋社團名稱或備註">
+  </div>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>日期</th><th>社團</th><th>名單</th><th>狀態</th><th>備註</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+
+  <h2>怎麼更新</h2>
+  <div class="how">
+    在 <code>index.html</code> 最下方的 <code>DATA.entries</code> 新增一行：<br>
+    <code>{d:"2026-11-14", g:"社團名稱", src:"名單2", st:"已發佈", n:"備註"}</code><br>
+    <code>st</code> 可用：已發佈／待審核／等入社／跳過。<code>src</code>：名單1／名單2／自家／其他。
+    同一個社團之後狀態變了（例如待審核→已發佈），就再加一行新日期，頁面以最新一筆為準，舊紀錄保留在每日進度裡。
+  </div>
+</main>
+<footer>只記錄分享狀態，不含任何報名者個資。</footer>
+
+<script>
+/* ===== 資料區：每天在這裡加幾行就好 ===== */
+const DATA = {
+  updated: "2026-11-13",
+  post: "P1 開放報名（FZT 社團主貼文）",
+  entries: [
+    /* 11/12 */
+    {d:"2026-11-12", g:"FZT未來斑馬程式設計學苑（自家社團）", src:"自家", st:"已發佈", n:"主貼文＋釘選精選＋留言報名連結；社團洞察 28 天瀏覽 99 人（基準）"},
+
+    /* 11/13 上午～中午：交接檔記錄（名單1） */
+    {d:"2026-11-13", g:"夏令營冬令營推薦", src:"名單1", st:"已發佈", n:"以馬心編帳號分享"},
+    {d:"2026-11-13", g:"新竹親子活動與課程", src:"名單1", st:"已發佈", n:"以馬心編帳號分享"},
+    {d:"2026-11-13", g:"新竹合法親子活動與課程", src:"名單1", st:"待審核", n:"李鉢卿帳號"},
+    {d:"2026-11-13", g:"高中國中小學營隊資訊交流", src:"名單1", st:"已發佈"},
+    {d:"2026-11-13", g:"STEAM 教育一起玩", src:"名單1", st:"已發佈"},
+    {d:"2026-11-13", g:"大新竹.桃園.苗栗…親子交流平台", src:"名單1", st:"待審核"},
+    {d:"2026-11-13", g:"多元智能兒童夏冬令營", src:"名單1", st:"已發佈"},
+    {d:"2026-11-13", g:"下課啦！新竹孩子玩什麼？", src:"名單1", st:"待審核"},
+    {d:"2026-11-13", g:"親子活動課程推薦-經驗&交流分享區", src:"名單1", st:"待審核"},
+    {d:"2026-11-13", g:"台灣夏令營冬令營課程推薦", src:"名單1", st:"等入社", n:"等入社批准；一個月只能發一篇"},
+    {d:"2026-11-13", g:"兒童營隊＆親子遊學站", src:"名單1", st:"等入社", n:"等入社批准；需標籤＋資訊格式"},
+    {d:"2026-11-13", g:"好課。好活動。蒐集。共享。", src:"名單1", st:"等入社"},
+    {d:"2026-11-13", g:"營隊活動資訊站", src:"名單1", st:"跳過", n:"狀態未確認，待查"},
+    {d:"2026-11-13", g:"孩子與爸媽的夏令營…", src:"名單1", st:"跳過", n:"狀態未確認，待查"},
+    {d:"2026-11-13", g:"課程活動分享", src:"名單1", st:"跳過", n:"狀態未確認，待查"},
+    {d:"2026-11-13", g:"M&M共學小花園", src:"名單1", st:"跳過", n:"要家長身分問卷，廠商須先私訊管理員；待 Harry 決定"},
+
+    /* 11/13 名單2 */
+    {d:"2026-11-13", g:"新竹在地社團 免費店家廣告", src:"名單2", st:"已發佈"},
+    {d:"2026-11-13", g:"新竹南寮人聊天大小事", src:"名單2", st:"已發佈"},
+    {d:"2026-11-13", g:"新竹大小事（15.2 萬人）", src:"名單2", st:"待審核", n:"已有 1 則貼文等管理員批准，不重複發"},
+    {d:"2026-11-13", g:"新竹(小學階段)共學相關訊息分享", src:"名單2", st:"已發佈", n:"社團宗旨就是讓教育機構分享活動"},
+    {d:"2026-11-13", g:"新竹縣市好康報報", src:"名單2", st:"已發佈", n:"社規歡迎商品／活動發文"},
+    {d:"2026-11-13", g:"新竹人新竹事", src:"名單2", st:"待審核", n:"店家廣告限兩週一篇；下次最早 11/27"},
+    {d:"2026-11-13", g:"竹塹好學-幸福進行市", src:"其他", st:"已發佈", n:"市府教育處管理；社規未禁止"},
+    {d:"2026-11-13", g:"新竹市無人機創新科技協會", src:"其他", st:"已發佈", n:"自家協會社團"},
+    {d:"2026-11-13", g:"新竹工商廣告隨意po", src:"名單2", st:"跳過", n:"帳號不是成員（分享清單找不到），未加入"},
+    {d:"2026-11-13", g:"新竹爆料公社", src:"名單2", st:"跳過", n:"社規禁貼社團連結、帳號已有 4 則待審，避免洗版"},
+    {d:"2026-11-13", g:"新竹幼兒教育才藝活動自學分享社團", src:"名單2", st:"跳過", n:"搜不到（私密或改名）"},
+    {d:"2026-11-13", g:"新竹運動/才藝/教育消費平臺", src:"名單2", st:"跳過", n:"搜不到（私密或改名）"},
+    {d:"2026-11-13", g:"新竹媽媽親子教育團", src:"名單2", st:"跳過", n:"搜不到（私密或改名）"}
+  ]
+};
+/* ===== 以下是頁面程式，不用動 ===== */
+const ORDER = {"已發佈":0,"待審核":1,"等入社":2,"跳過":3};
+const CLS = {"已發佈":"ok","待審核":"pend","等入社":"wait","跳過":"skip"};
+const LABEL = {"已發佈":"已發佈","待審核":"待管理員審核","等入社":"等入社批准","跳過":"跳過／無法"};
+const esc = s => String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+let selDay = null, selSt = "all", q = "";
+
+// 每個社團取「最新一筆」代表目前狀態
+function latest(){
+  const m = new Map();
+  DATA.entries.forEach((e,i)=>{ const k=e.g; if(!m.has(k) || m.get(k).d <= e.d) m.set(k,{...e,i}); });
+  return [...m.values()];
+}
+function renderCards(){
+  const L = latest(), c = {"已發佈":0,"待審核":0,"等入社":0,"跳過":0};
+  L.forEach(e=>c[e.st]++);
+  const items = [
+    ["", L.length, "追蹤中社團"],
+    ["ok", c["已發佈"], "已發佈"],
+    ["pend", c["待審核"], "待管理員審核"],
+    ["wait", c["等入社"], "等入社批准"],
+    ["skip", c["跳過"], "跳過／無法分享"]
+  ];
+  document.getElementById("cards").innerHTML = items.map(x=>`<div class="stat ${x[0]}"><b>${x[1]}</b><span>${x[2]}</span></div>`).join("");
+}
+function renderDays(){
+  const by = {};
+  DATA.entries.forEach(e=>{ (by[e.d]=by[e.d]||{"已發佈":0,"待審核":0,"等入社":0,"跳過":0})[e.st]++; });
+  const days = Object.keys(by).sort().reverse();
+  document.getElementById("days").innerHTML = days.map(d=>{
+    const c = by[d], t = c["已發佈"]+c["待審核"]+c["等入社"]+c["跳過"];
+    const seg = (n,col)=>n?`<i style="width:${n/t*100}%;background:${col}"></i>`:"";
+    return `<div class="day ${selDay===d?'on':''}" data-d="${d}">
+      <h3>${d}</h3>
+      <div class="bar">${seg(c["已發佈"],"var(--ok)")}${seg(c["待審核"],"var(--pend)")}${seg(c["等入社"],"var(--wait)")}${seg(c["跳過"],"#c3c8d0")}</div>
+      <small>共 ${t} 筆｜發佈 ${c["已發佈"]}・審核 ${c["待審核"]}・等入社 ${c["等入社"]}・跳過 ${c["跳過"]}</small>
+    </div>`;
+  }).join("");
+  document.querySelectorAll(".day").forEach(el=>el.onclick=()=>{ selDay = selDay===el.dataset.d?null:el.dataset.d; renderDays(); renderRows(); });
+}
+function renderRows(){
+  let rows = DATA.entries.slice();
+  if(selDay) rows = rows.filter(e=>e.d===selDay);
+  if(selSt!=="all") rows = rows.filter(e=>e.st===selSt);
+  if(q) rows = rows.filter(e=>(e.g+" "+(e.n||"")).toLowerCase().includes(q));
+  rows.sort((a,b)=> b.d.localeCompare(a.d) || ORDER[a.st]-ORDER[b.st]);
+  document.getElementById("rows").innerHTML = rows.length ? rows.map(e=>`<tr>
+    <td class="src">${esc(e.d)}</td>
+    <td>${esc(e.g)}</td>
+    <td class="src">${esc(e.src)}</td>
+    <td><span class="tag ${CLS[e.st]||'skip'}">${esc(LABEL[e.st]||e.st)}</span></td>
+    <td class="note">${esc(e.n)}</td></tr>`).join("") : `<tr><td colspan="5" class="note">沒有符合的紀錄</td></tr>`;
+}
+document.querySelectorAll(".chip").forEach(el=>el.onclick=()=>{
+  document.querySelectorAll(".chip").forEach(x=>x.classList.remove("on")); el.classList.add("on");
+  selSt = el.dataset.st; renderRows();
+});
+document.getElementById("q").oninput = e=>{ q = e.target.value.trim().toLowerCase(); renderRows(); };
+document.getElementById("updated").textContent = DATA.updated;
+renderCards(); renderDays(); renderRows();
+</script>
+</body>
+</html>
