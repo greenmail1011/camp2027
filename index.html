@@ -12,7 +12,17 @@
 <link rel="canonical" href="https://greenmail1011.github.io/camp2027/">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
-<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}
+.cd{margin-top:14px;margin-bottom:-34px;padding:16px 14px 18px;border-radius:16px;background:linear-gradient(135deg,#9A2F06,#C2410C);color:#fff;text-align:center;box-shadow:0 6px 18px rgba(194,65,12,.28)}
+.cd[hidden]{display:none}
+.cd-t{font-size:clamp(15px,4.2vw,19px);font-weight:900;letter-spacing:.02em}
+.cd-t b{font-family:var(--f-num);color:#FFE27A;font-size:1.25em}
+.cd-grid{display:flex;justify-content:center;gap:8px;margin:12px 0 14px}
+.cd-grid>div{flex:1 1 0;max-width:92px;background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.28);border-radius:12px;padding:8px 2px 6px}
+.cd-grid b{display:block;font-family:var(--f-num);font-variant-numeric:tabular-nums;font-size:clamp(30px,10vw,46px);line-height:1.05;color:#FFE27A;font-weight:700}
+.cd-grid small{font-size:13px;font-weight:700;opacity:.92}
+.cd .btn{min-width:220px}
+</style>
 <title>2027 新竹寒假營隊｜AI創客無人機冬令營（國小 3 年級以上）1/25–1/29</title>
 <meta name="description" content="2027 新竹寒假營隊：AI創客無人機冬令營，1/25–1/29 在新竹陽明交大光復校區，國小 3 年級以上、無經驗可。親手組裝遙控無人機、以 AI 為 Python 助手寫程式自動飛行，最後兩天國際規格無人機足球競技場實戰；前 30 位報名繳費贈千元 STEAM 飛行套件。">
 <script type="application/ld+json">
@@ -341,6 +351,11 @@ footer{color:var(--muted);font-size:14px;text-align:center;border-top:1px solid 
 </header>
 
 <main class="wrap">
+  <section class="cd" id="cd" hidden aria-label="優惠倒數">
+    <div class="cd-t"><span id="cd-name">超早鳥</span>優惠倒數｜<span id="cd-date">11/30</span> 截止・每位 <b id="cd-price">$8,800</b></div>
+    <div class="cd-grid"><div><b id="cd-d">00</b><small>天</small></div><div><b id="cd-h">00</b><small>時</small></div><div><b id="cd-m">00</b><small>分</small></div><div><b id="cd-s">00</b><small>秒</small></div></div>
+    <a class="btn btn-primary" href="register.html">立即報名・鎖定優惠</a>
+  </section>
   <section class="hero" aria-labelledby="t">
     <div class="eyebrow">新竹寒假營隊・五日營隊</div>
     <h1 id="t"><span class="num">2027</span> AI創客無人機冬令營</h1>
@@ -626,6 +641,31 @@ footer{color:var(--muted);font-size:14px;text-align:center;border-top:1px solid 
     if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(url).then(function(){done("已複製網址，可以貼給朋友了！");},function(){done("網址："+url);});}
     else{done("網址："+url);}
   });}
+})();
+</script>
+<script>
+(function(){
+  var T=[{n:"超早鳥",p:"$8,800",d:"11/30",e:new Date("2026-11-30T23:59:59+08:00")},{n:"早鳥",p:"$9,300",d:"12/31",e:new Date("2026-12-31T23:59:59+08:00")}];
+  var box=document.getElementById("cd"); if(!box) return;
+  function pad(x){return x<10?"0"+x:""+x;}
+  var shown=null;
+  function tick(){
+    var now=new Date(), cur=null;
+    for(var i=0;i<T.length;i++){ if(now<=T[i].e){cur=T[i];break;} }
+    if(!cur){box.hidden=true;return;}
+    if(shown&&shown!==cur){location.reload();return;}
+    if(!shown){shown=cur;
+      document.getElementById("cd-name").textContent=cur.n;
+      document.getElementById("cd-date").textContent=cur.d;
+      document.getElementById("cd-price").textContent=cur.p;
+      box.hidden=false;}
+    var ms=Math.max(0,cur.e-now)+1000, t=Math.floor(ms/1000);
+    document.getElementById("cd-d").textContent=pad(Math.floor(t/86400));
+    document.getElementById("cd-h").textContent=pad(Math.floor(t%86400/3600));
+    document.getElementById("cd-m").textContent=pad(Math.floor(t%3600/60));
+    document.getElementById("cd-s").textContent=pad(t%60);
+  }
+  tick(); setInterval(tick,1000);
 })();
 </script>
 <script>
