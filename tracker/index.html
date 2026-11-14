@@ -64,6 +64,11 @@
   <div class="cards" id="cards"></div>
 
   <h2>每日進度（點日期可篩選）</h2>
+  <div id="clicksBox" style="margin:16px 0;padding:12px 14px;border:1px solid #ddd;border-radius:10px;background:#fff">
+    <div style="font-weight:700;margin-bottom:6px">報名頁點擊（依來源社團）　總計：<span id="clkTotal">0</span> 次</div>
+    <div id="clkList" style="font-size:14px;line-height:1.8">載入中…</div>
+    <div class="note" style="font-size:12px;opacity:.7;margin-top:6px">同一人同一瀏覽分頁只算一次；測試資料已排除。每分鐘自動更新。</div>
+  </div>
   <div class="days" id="days"></div>
 
   <h2>社團明細</h2>
@@ -243,6 +248,20 @@ function loadSheet(){
 loadSheet();
 setInterval(loadSheet, 60000);          // 每 60 秒自動重讀一次
 document.addEventListener("visibilitychange",()=>{ if(!document.hidden) loadSheet(); });  // 切回分頁立刻更新
+
+/* ===== 點擊追蹤：Google 表單記錄 → 回覆試算表（已發布 CSV）。連結格式 …/camp2027/?from=<代碼> ===== */
+const CLICK_CSV="https://docs.google.com/spreadsheets/d/e/2PACX-1vTttzzIITW184S5m41WMZ-emwOpPpkJRhhASmApAK5SWP8lEhkpQy0C9V-k_XSMRKc5XK8qbgnyNH7l/pub?gid=669604275&single=true&output=csv";
+const FROM_NAME={assoc:"新竹市無人機創新科技協會",kid:"兒童營隊＆親子遊學站",mom:"孩子與爸媽的夏令營…",act:"課程活動分享",direct:"直接開啟／短網址（未標來源）"};
+function loadClicks(){
+  fetch(CLICK_CSV+"&t="+Date.now(),{cache:"no-store"}).then(r=>r.text()).then(txt=>{
+    const cnt={}; let tot=0;
+    parseCSV(txt).slice(1).forEach(c=>{const f=(c[1]||"").trim(); if(!f||f==="test") return; cnt[f]=(cnt[f]||0)+1; tot++;});
+    document.getElementById("clkTotal").textContent=tot;
+    const ks=Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a]);
+    document.getElementById("clkList").innerHTML=ks.length?ks.map(k=>esc(FROM_NAME[k]||k)+"：<b>"+cnt[k]+"</b>").join("<br>"):"尚無點擊紀錄";
+  }).catch(()=>{document.getElementById("clkList").textContent="暫時讀取不到點擊資料";});
+}
+loadClicks(); setInterval(loadClicks,60000);
 </script>
 </body>
 </html>
