@@ -58,7 +58,7 @@
 <body>
 <header>
   <h1>2027 AI創客無人機冬令營｜FB 社團分享追蹤</h1>
-  <div class="sub">每天只要在下方 <code>DATA.entries</code> 加幾行並 push，頁面就會自動更新。最後更新：<span id="updated"></span></div>
+  <div class="sub">資料存放在雲端試算表，新增一列後重新整理本頁就會更新，不需要改程式碼。最後更新：<span id="updated"></span></div>
 </header>
 <main>
   <div class="cards" id="cards"></div>
@@ -206,6 +206,35 @@ document.querySelectorAll(".chip").forEach(el=>el.onclick=()=>{
 document.getElementById("q").oninput = e=>{ q = e.target.value.trim().toLowerCase(); renderRows(); };
 document.getElementById("updated").textContent = DATA.updated;
 renderCards(); renderDays(); renderRows();
+
+/* ===== 資料來源：Google 雲端試算表（已發布為 CSV）。在試算表加一列，這個頁面重新整理就會更新，不用改程式碼 =====
+   上面 DATA.entries 只是備援（讀不到試算表時顯示）。 */
+const SHEET_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS2N1AC_cRQl4AqqZaZFWT4qv5GvLDYqCvdwXSV1HVVqD--kru4vTuts_aRDaTMGLv94lE8uSrzlgTO/pub?gid=0&single=true&output=csv";
+function parseCSV(t){
+  const rows=[]; let r=[], f="", q=false;
+  for(let i=0;i<t.length;i++){
+    const c=t[i];
+    if(q){ if(c==='"'){ if(t[i+1]==='"'){f+='"';i++;} else q=false; } else f+=c; }
+    else if(c==='"') q=true;
+    else if(c===','){ r.push(f); f=""; }
+    else if(c==='\n'){ r.push(f); rows.push(r); r=[]; f=""; }
+    else if(c!=='\r') f+=c;
+  }
+  if(f!==""||r.length){ r.push(f); rows.push(r); }
+  return rows;
+}
+function normDate(v){
+  const m=String(v).trim().match(/^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})/);
+  return m ? m[1]+"-"+m[2].padStart(2,"0")+"-"+m[3].padStart(2,"0") : "";
+}
+fetch(SHEET_CSV+"&t="+Date.now()).then(r=>{ if(!r.ok) throw new Error(r.status); return r.text(); }).then(txt=>{
+  const rows=parseCSV(txt).slice(1).map(c=>({d:normDate(c[0]),g:(c[1]||"").trim(),src:(c[2]||"").trim(),st:(c[3]||"").trim(),n:(c[4]||"").trim()})).filter(e=>e.d&&e.g&&CLS[e.st]);
+  if(!rows.length) return;
+  DATA.entries = rows;
+  DATA.updated = rows.map(e=>e.d).sort().pop();
+  document.getElementById("updated").textContent = DATA.updated + "（資料來自雲端試算表）";
+  renderCards(); renderDays(); renderRows();
+}).catch(err=>console.warn("讀取試算表失敗，改用內建備援資料", err));
 </script>
 </body>
 </html>
