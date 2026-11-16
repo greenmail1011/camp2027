@@ -102,6 +102,25 @@
   .kpi{border:1px solid var(--line);border-radius:12px;padding:10px 14px;background:#fafbfc}
   .kpi b{display:block;font-size:22px;line-height:1.15}
   .kpi span{font-size:12px;color:var(--mute)}
+  /* ===== 專業長條圖 ===== */
+  .insight{background:#f4f7ff;border:1px solid #dbe5fb;border-radius:10px;padding:9px 14px;font-size:13px;color:#24407f;margin:0 0 12px}
+  .insight b{color:#14275a}
+  .mtools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 6px}
+  .mtools .sp{flex:1}
+  .hb{display:grid;grid-template-columns:22px minmax(96px,200px) 1fr 62px 40px;align-items:center;gap:8px;padding:3px 6px;border-radius:8px;font-size:13px}
+  .hb:hover{background:#f6f8fb}
+  .hb .rk{color:var(--mute);font-size:11px;text-align:right;font-variant-numeric:tabular-nums}
+  .hb .nm{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+  .hb .tr{height:18px;border-radius:4px;background-color:#f6f7f9;position:relative}
+  .hb .tr i{position:absolute;left:0;top:3px;bottom:3px;border-radius:2px 99px 99px 2px;min-width:2px}
+  .hb .vl{text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
+  .hb .pc{text-align:right;color:var(--mute);font-size:12px;font-variant-numeric:tabular-nums}
+  .hb.axis{padding-top:0;padding-bottom:2px;color:var(--mute);font-size:11px}
+  .hb.axis:hover{background:none}
+  .hb.axis .tr{background:none;height:16px}
+  .hb.axis .tk{position:absolute;top:0;transform:translateX(-50%);white-space:nowrap}
+  .hb.axis .tk:first-child{transform:none}
+  .hb.axis .th{text-align:right;font-size:11px}
   footer{max-width:1100px;margin:0 auto;padding:0 20px 28px;color:var(--mute);font-size:12px}
 </style>
 </head>
@@ -124,10 +143,17 @@
   </details>
 
   <details class="panel" data-k="reach" open>
-    <summary><span>👥 各社團資訊卡</span><span class="sum">已發佈＋待審核合計 <b id="memTotal">0</b> 人</span></summary>
+    <summary><span>👥 各社團人數</span><span class="sum">已發佈＋待審核合計 <b id="memTotal">0</b> 人</span></summary>
     <div class="pbody">
+      <div class="insight" id="memInsight"></div>
+      <div class="mtools">
+        <span class="chip on" data-ms="reach">可觸及（不含跳過）</span><span class="chip" data-ms="已發佈">已發佈</span><span class="chip" data-ms="待審核">待審核</span><span class="chip" data-ms="等入社">等入社</span><span class="chip" data-ms="跳過">跳過</span><span class="chip" data-ms="all">全部</span>
+        <span class="sp"></span>
+        <span class="chip" id="memLog" title="人數差距很大時，用對數刻度讓小社團也看得清楚">對數刻度</span>
+      </div>
       <div class="keys"><span><i style="background:#12805c"></i>已發佈</span><span><i style="background:#2f5fd0"></i>待審核</span><span><i style="background:#d9921b"></i>等入社</span><span><i style="background:#c3c8d0"></i>跳過</span></div>
-      <div class="cgrid" id="memChart"></div>
+      <div id="memAxis"></div>
+      <div id="memChart"></div>
       <div class="more"><button class="btn" id="memMore"></button></div>
     </div>
   </details>
@@ -271,24 +297,40 @@ function renderDonuts(){
   const nd=new Set(DATA.entries.map(e=>e.d)).size;
   document.getElementById("sumDays").textContent=`${nd} 天・點日期可篩選下方明細`;
 }
-let CLK={};
+let CLK={}, memF="reach", memLog=false;
+const fmtN=v=>v>=10000?(+(v/10000).toFixed(1))+" 萬":v.toLocaleString();
+function niceMax(v){const e=Math.pow(10,Math.floor(Math.log10(v))),f=v/e;return (f<=1?1:f<=2?2:f<=2.5?2.5:f<=5?5:10)*e;}
 function renderMemChart(){
   const el=document.getElementById("memChart"); if(!el) return;
-  const mm=MEM(), L=latest().map(e=>({g:e.g,m:mm[e.g]||0,st:e.st,d:e.d}));
-  L.sort((a,b)=>b.m-a.m||ORDER[a.st]-ORDER[b.st]); const max=Math.max(1,...L.map(e=>e.m));
+  const mm=MEM(), all=latest().map(e=>({g:e.g,m:mm[e.g]||0,st:e.st,d:e.d}));
+  const reachSet=all.filter(e=>e.st!=="跳過"&&e.m);
+  const reachTot=reachSet.reduce((a,e)=>a+e.m,0);
+  const pubPend=all.filter(e=>(e.st==="已發佈"||e.st==="待審核")&&e.m).reduce((a,e)=>a+e.m,0);
+  document.getElementById("memTotal").textContent=pubPend.toLocaleString();
+  let L=all.filter(e=>e.m);
+  if(memF==="reach") L=L.filter(e=>e.st!=="跳過"); else if(memF!=="all") L=L.filter(e=>e.st===memF);
+  L.sort((a,b)=>b.m-a.m);
+  const noData=all.length-all.filter(e=>e.m).length;
+  // 重點摘要
+  const t3=reachSet.slice().sort((a,b)=>b.m-a.m).slice(0,3), t3s=t3.reduce((a,e)=>a+e.m,0);
+  const med=(()=>{const x=reachSet.map(e=>e.m).sort((a,b)=>a-b);return x.length?x[Math.floor(x.length/2)]:0;})();
+  document.getElementById("memInsight").innerHTML=reachTot?`可觸及（不去重）<b>${reachTot.toLocaleString()}</b> 人；前 3 大社團占 <b>${Math.round(t3s/reachTot*100)}%</b>（${t3.map(e=>esc(e.g.replace(/（.*?）/g,""))).join("、")}）；中位數約 <b>${med.toLocaleString()}</b> 人${noData?`；另有 ${noData} 個社團尚無人數資料`:""}`:"尚無人數資料";
+  // 刻度
+  const max=L.length?L[0].m:1; let pos,ticks=[];
+  if(memLog){const mn=Math.min(...L.map(e=>e.m),100);const lo=Math.pow(10,Math.floor(Math.log10(Math.max(mn,1)))),hi=Math.pow(10,Math.ceil(Math.log10(max)));const span=Math.log10(hi/lo)||1;pos=v=>(Math.log10(Math.max(v,lo)/lo)/span)*100;for(let v=lo;v<=hi*1.001;v*=10)ticks.push(v);}
+  else{const nm=niceMax(max),mt=nm/Math.pow(10,Math.floor(Math.log10(nm))),n=mt===2?4:5;pos=v=>v/nm*100;for(let i=0;i<=n;i++)ticks.push(nm*i/n);}
+  const grid=ticks.map(v=>{const x=pos(v);return `linear-gradient(to right,transparent calc(${x}% - .5px),#dfe3e8 calc(${x}% - .5px),#dfe3e8 calc(${x}% + .5px),transparent calc(${x}% + .5px))`;}).join(",");
+  document.getElementById("memAxis").innerHTML=`<div class="hb axis"><div></div><div></div><div class="tr">${ticks.map(v=>`<span class="tk" style="left:${pos(v)}%">${v===0?"0":fmtN(v)}</span>`).join("")}</div><div class="th">人數</div><div class="th">占比</div></div>`;
   const show=memAll?L:L.slice(0,12);
-  el.innerHTML=show.map((e,i)=>{const c=CLK[e.g]; return `<div class="card" style="--c:${COL[e.st]||"#c3c8d0"}">
-    <div class="rk">#${i+1}</div>
-    <div class="nm" title="${esc(e.g)}">${esc(e.g)}</div>
-    <div class="big ${e.m?"":"na"}">${e.m?e.m.toLocaleString():"—"}<small>人</small></div>
-    <div class="mini"><i style="width:${e.m?Math.max(e.m/max*100,1.5):0}%;background:${COL[e.st]||"#c3c8d0"}"></i></div>
-    <div class="meta"><span class="tag ${CLS[e.st]||"skip"}">${esc(LABEL[e.st]||e.st)}</span><span>${c?`點擊 <b>${c}</b>・`:""}${esc(e.d.slice(5))}</span></div>
-  </div>`;}).join("");
+  el.innerHTML=show.length?show.map((e,i)=>{
+    const c=CLK[e.g], share=e.st!=="跳過"&&reachTot?(e.m/reachTot*100):null;
+    const tip=`${e.g}\n狀態：${LABEL[e.st]||e.st}\n人數：${e.m.toLocaleString()}\n最近紀錄：${e.d}${c?"\n報名頁點擊："+c:""}`;
+    return `<div class="hb" title="${esc(tip)}"><div class="rk">${i+1}</div><div class="nm">${esc(e.g)}</div><div class="tr" style="background-image:${grid}"><i style="width:${Math.max(pos(e.m),0.8)}%;background:${COL[e.st]||"#c3c8d0"}"></i></div><div class="vl">${e.m.toLocaleString()}</div><div class="pc">${share==null?"—":(share<1?"<1":Math.round(share))+"%"}</div></div>`;}).join(""):`<div class="note">沒有符合的社團</div>`;
   const btn=document.getElementById("memMore");
   if(L.length<=12){btn.style.display="none";} else {btn.style.display="";btn.textContent=memAll?"只顯示前 12 名":`顯示全部 ${L.length} 個社團`;}
-  const tot=L.filter(e=>e.st==="已發佈"||e.st==="待審核").reduce((a,e)=>a+e.m,0);
-  document.getElementById("memTotal").textContent=tot.toLocaleString();
 }
+document.querySelectorAll("[data-ms]").forEach(c=>c.onclick=()=>{document.querySelectorAll("[data-ms]").forEach(x=>x.classList.remove("on"));c.classList.add("on");memF=c.dataset.ms;renderMemChart();});
+document.getElementById("memLog").onclick=function(){memLog=!memLog;this.classList.toggle("on",memLog);renderMemChart();};
 function renderCharts(){ renderMemChart(); renderDonuts(); }
 document.getElementById("memMore").onclick=()=>{memAll=!memAll;renderMemChart();};
 /* 面板收合：記住使用者的選擇 */
@@ -339,8 +381,8 @@ function renderRows(){
     <td class="src">${e.m?e.m.toLocaleString():"—"}</td>
     <td class="note">${esc(e.n)}</td></tr>`).join("") : `<tr><td colspan="6" class="note">沒有符合的紀錄</td></tr>`;
 }
-document.querySelectorAll(".chip").forEach(el=>el.onclick=()=>{
-  document.querySelectorAll(".chip").forEach(x=>x.classList.remove("on")); el.classList.add("on");
+document.querySelectorAll(".chip[data-st]").forEach(el=>el.onclick=()=>{
+  document.querySelectorAll(".chip[data-st]").forEach(x=>x.classList.remove("on")); el.classList.add("on");
   selSt = el.dataset.st; renderRows();
 });
 document.getElementById("q").oninput = e=>{ q = e.target.value.trim().toLowerCase(); renderRows(); };
