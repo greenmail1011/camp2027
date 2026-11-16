@@ -85,6 +85,23 @@
   .keys span{display:inline-flex;align-items:center;gap:6px}
   .keys i{width:10px;height:10px;border-radius:3px}
   .more{margin-top:10px;text-align:center}
+  /* ===== 資訊小卡 ===== */
+  .cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
+  .card{position:relative;border:1px solid var(--line);border-left:4px solid var(--c,#c3c8d0);border-radius:12px;padding:12px 14px;background:#fff;display:flex;flex-direction:column;gap:8px;transition:box-shadow .15s,transform .15s}
+  .card:hover{box-shadow:0 4px 14px rgba(16,24,40,.09);transform:translateY(-1px)}
+  .card .rk{position:absolute;top:8px;right:10px;font-size:11px;color:var(--mute);font-variant-numeric:tabular-nums}
+  .card .nm{font-size:13px;font-weight:600;line-height:1.35;min-height:2.7em;padding-right:22px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .card .big{font-size:25px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+  .card .big small{font-size:12px;color:var(--mute);font-weight:500;margin-left:3px}
+  .card .big.na{color:#c3c8d0}
+  .card .mini{height:4px;background:var(--skip-bg);border-radius:99px;overflow:hidden}
+  .card .mini i{display:block;height:100%;border-radius:99px}
+  .card .meta{display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:12px;color:var(--mute)}
+  .card .meta b{color:var(--ink)}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:14px}
+  .kpi{border:1px solid var(--line);border-radius:12px;padding:10px 14px;background:#fafbfc}
+  .kpi b{display:block;font-size:22px;line-height:1.15}
+  .kpi span{font-size:12px;color:var(--mute)}
   footer{max-width:1100px;margin:0 auto;padding:0 20px 28px;color:var(--mute);font-size:12px}
 </style>
 </head>
@@ -107,10 +124,10 @@
   </details>
 
   <details class="panel" data-k="reach" open>
-    <summary><span>👥 各社團人數</span><span class="sum">已發佈＋待審核合計 <b id="memTotal">0</b> 人</span></summary>
+    <summary><span>👥 各社團資訊卡</span><span class="sum">已發佈＋待審核合計 <b id="memTotal">0</b> 人</span></summary>
     <div class="pbody">
       <div class="keys"><span><i style="background:#12805c"></i>已發佈</span><span><i style="background:#2f5fd0"></i>待審核</span><span><i style="background:#d9921b"></i>等入社</span><span><i style="background:#c3c8d0"></i>跳過</span></div>
-      <div id="memChart"></div>
+      <div class="cgrid" id="memChart"></div>
       <div class="more"><button class="btn" id="memMore"></button></div>
     </div>
   </details>
@@ -118,6 +135,7 @@
   <details class="panel" data-k="clicks" open>
     <summary><span>🔗 報名頁點擊（依來源社團）</span><span class="sum">總計 <b id="clkTotal">0</b> 次</span></summary>
     <div class="pbody">
+      <div class="kpis" id="clkKpi"></div>
       <div id="clkList">載入中…</div>
       <div class="note" style="font-size:12px;margin-top:10px">同一人同一瀏覽分頁只算一次；測試資料已排除。每分鐘自動更新。</div>
     </div>
@@ -253,14 +271,21 @@ function renderDonuts(){
   const nd=new Set(DATA.entries.map(e=>e.d)).size;
   document.getElementById("sumDays").textContent=`${nd} 天・點日期可篩選下方明細`;
 }
+let CLK={};
 function renderMemChart(){
   const el=document.getElementById("memChart"); if(!el) return;
-  const mm=MEM(), L=latest().filter(e=>mm[e.g]).map(e=>({g:e.g,m:mm[e.g],st:e.st}));
-  L.sort((a,b)=>b.m-a.m); const max=L.length?L[0].m:1;
-  const show=memAll?L:L.slice(0,10);
-  el.innerHTML=show.map((e,i)=>`<div class="brow"><div class="rk">${i+1}</div><div class="nm" title="${esc(e.g)}">${esc(e.g)}</div><div class="tr"><i style="width:${Math.max(e.m/max*100,0.8)}%;background:${COL[e.st]||"#c3c8d0"}"></i></div><div class="vl">${e.m.toLocaleString()}</div></div>`).join("");
+  const mm=MEM(), L=latest().map(e=>({g:e.g,m:mm[e.g]||0,st:e.st,d:e.d}));
+  L.sort((a,b)=>b.m-a.m||ORDER[a.st]-ORDER[b.st]); const max=Math.max(1,...L.map(e=>e.m));
+  const show=memAll?L:L.slice(0,12);
+  el.innerHTML=show.map((e,i)=>{const c=CLK[e.g]; return `<div class="card" style="--c:${COL[e.st]||"#c3c8d0"}">
+    <div class="rk">#${i+1}</div>
+    <div class="nm" title="${esc(e.g)}">${esc(e.g)}</div>
+    <div class="big ${e.m?"":"na"}">${e.m?e.m.toLocaleString():"—"}<small>人</small></div>
+    <div class="mini"><i style="width:${e.m?Math.max(e.m/max*100,1.5):0}%;background:${COL[e.st]||"#c3c8d0"}"></i></div>
+    <div class="meta"><span class="tag ${CLS[e.st]||"skip"}">${esc(LABEL[e.st]||e.st)}</span><span>${c?`點擊 <b>${c}</b>・`:""}${esc(e.d.slice(5))}</span></div>
+  </div>`;}).join("");
   const btn=document.getElementById("memMore");
-  if(L.length<=10){btn.style.display="none";} else {btn.style.display="";btn.textContent=memAll?"只顯示前 10 名":`顯示全部 ${L.length} 個社團`;}
+  if(L.length<=12){btn.style.display="none";} else {btn.style.display="";btn.textContent=memAll?"只顯示前 12 名":`顯示全部 ${L.length} 個社團`;}
   const tot=L.filter(e=>e.st==="已發佈"||e.st==="待審核").reduce((a,e)=>a+e.m,0);
   document.getElementById("memTotal").textContent=tot.toLocaleString();
 }
@@ -367,6 +392,10 @@ function loadClicks(){
     const cnt={}; let tot=0;
     parseCSV(txt).slice(1).forEach(c=>{const f=(c[1]||"").trim(); if(!f||f==="test") return; cnt[f]=(cnt[f]||0)+1; tot++;});
     document.getElementById("clkTotal").textContent=tot;
+    CLK={}; Object.keys(cnt).forEach(k=>{if(k!=="direct") CLK[FROM_NAME[k]||k]=cnt[k];});
+    const top=Object.keys(cnt).filter(k=>k!=="direct").sort((a,b)=>cnt[b]-cnt[a])[0];
+    document.getElementById("clkKpi").innerHTML=`<div class="kpi"><b>${tot}</b><span>總點擊次數</span></div><div class="kpi"><b>${Object.keys(cnt).filter(k=>k!=="direct").length}</b><span>有點擊的來源社團</span></div><div class="kpi"><b>${top?cnt[top]:0}</b><span>最高來源：${esc(top?(FROM_NAME[top]||top):"—")}</span></div><div class="kpi"><b>${tot?Math.round((cnt.direct||0)/tot*100):0}%</b><span>未標來源（直接／短網址）</span></div>`;
+    renderMemChart();
     const ks=Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a]);
     const mx=ks.length?cnt[ks[0]]:1;
     document.getElementById("clkList").innerHTML=ks.length?ks.map((k,i)=>`<div class="brow" style="grid-template-columns:22px minmax(96px,210px) 1fr 70px"><div class="rk">${i+1}</div><div class="nm" title="${esc(FROM_NAME[k]||k)}">${esc(FROM_NAME[k]||k)}</div><div class="tr"><i style="width:${cnt[k]/mx*100}%;background:${k==="direct"?"#c3c8d0":"#2f5fd0"}"></i></div><div class="vl">${cnt[k]} <span style="color:var(--mute);font-weight:400;font-size:12px">${Math.round(cnt[k]/tot*100)}%</span></div></div>`).join(""):"尚無點擊紀錄";
