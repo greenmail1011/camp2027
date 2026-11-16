@@ -52,6 +52,39 @@
   .note{color:var(--mute);font-size:13px}
   .how{background:var(--card);border:1px dashed var(--line);border-radius:12px;padding:12px 16px;color:var(--mute);font-size:13px}
   .how code{background:var(--skip-bg);padding:1px 5px;border-radius:4px;font-size:12px}
+
+  /* ===== 可收合面板與圖表 ===== */
+  .toolbar{display:flex;justify-content:flex-end;gap:8px;margin:6px 0 0}
+  .btn{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:5px 12px;font:inherit;font-size:13px;color:var(--ink);cursor:pointer}
+  .btn:hover{background:#f2f4f7}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:14px;margin:12px 0;box-shadow:0 1px 2px rgba(16,24,40,.05)}
+  .panel>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:14px 18px;font-weight:700;font-size:15px;user-select:none}
+  .panel>summary::-webkit-details-marker{display:none}
+  .panel>summary::before{content:"";width:7px;height:7px;border-right:2px solid var(--mute);border-bottom:2px solid var(--mute);transform:rotate(-45deg);transition:transform .15s;margin:0 4px 0 2px}
+  .panel[open]>summary::before{transform:rotate(45deg)}
+  .panel>summary .sum{margin-left:auto;font-weight:500;color:var(--mute);font-size:13px;text-align:right}
+  .panel>summary .sum b{color:var(--ink);font-weight:700}
+  .pbody{padding:16px 18px 18px;border-top:1px solid var(--line)}
+  .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:22px}
+  .chartbox h4{margin:0 0 10px;font-size:13px;color:var(--mute);font-weight:600}
+  .donutwrap{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+  .donutwrap svg{flex:none}
+  .legend{list-style:none;margin:0;padding:0;font-size:13px;flex:1;min-width:160px}
+  .legend li{display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px dashed var(--line)}
+  .legend li:last-child{border-bottom:0}
+  .legend i{width:10px;height:10px;border-radius:3px;flex:none}
+  .legend .lv{margin-left:auto;font-weight:700;font-variant-numeric:tabular-nums}
+  .legend .lp{width:42px;text-align:right;color:var(--mute);font-size:12px;font-variant-numeric:tabular-nums}
+  .brow{display:grid;grid-template-columns:22px minmax(96px,210px) 1fr 70px;align-items:center;gap:8px;padding:3px 0;font-size:13px}
+  .brow .rk{color:var(--mute);font-size:11px;text-align:right;font-variant-numeric:tabular-nums}
+  .brow .nm{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+  .brow .tr{background:var(--skip-bg);border-radius:99px;height:12px;overflow:hidden}
+  .brow .tr i{display:block;height:100%;border-radius:99px}
+  .brow .vl{text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
+  .keys{display:flex;flex-wrap:wrap;gap:14px;margin:0 0 10px;font-size:12px;color:var(--mute)}
+  .keys span{display:inline-flex;align-items:center;gap:6px}
+  .keys i{width:10px;height:10px;border-radius:3px}
+  .more{margin-top:10px;text-align:center}
   footer{max-width:1100px;margin:0 auto;padding:0 20px 28px;color:var(--mute);font-size:12px}
 </style>
 </head>
@@ -63,20 +96,41 @@
 <main>
   <div class="cards" id="cards"></div>
 
-  <h2>各社團人數（顏色＝目前狀態；綠＝已發佈、藍＝待審核、灰＝跳過）</h2>
-  <div style="margin:8px 0 16px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:#fff">
-    <div style="font-weight:700;margin-bottom:6px">已發佈＋待審核社團可觸及人數合計（不去重）：<span id="memTotal">0</span></div>
-    <div id="memChart"></div>
-  </div>
-  <h2>每日進度（點日期可篩選）</h2>
-  <div id="clicksBox" style="margin:16px 0;padding:12px 14px;border:1px solid #ddd;border-radius:10px;background:#fff">
-    <div style="font-weight:700;margin-bottom:6px">報名頁點擊（依來源社團）　總計：<span id="clkTotal">0</span> 次</div>
-    <div id="clkList" style="font-size:14px;line-height:1.8">載入中…</div>
-    <div class="note" style="font-size:12px;opacity:.7;margin-top:6px">同一人同一瀏覽分頁只算一次；測試資料已排除。每分鐘自動更新。</div>
-  </div>
-  <div class="days" id="days"></div>
+  <div class="toolbar"><button class="btn" id="expAll">全部展開</button><button class="btn" id="colAll">全部收合</button></div>
 
-  <h2>社團明細</h2>
+  <details class="panel" data-k="overview" open>
+    <summary><span>📊 數據總覽</span><span class="sum" id="sumOverview"></span></summary>
+    <div class="pbody"><div class="grid2">
+      <div class="chartbox"><h4>社團狀態分布（個）</h4><div class="donutwrap"><div id="donutSt"></div><ul class="legend" id="lgSt"></ul></div></div>
+      <div class="chartbox"><h4>可觸及人數（已發佈＋待審核＋等入社，不去重）</h4><div class="donutwrap"><div id="donutReach"></div><ul class="legend" id="lgReach"></ul></div></div>
+    </div></div>
+  </details>
+
+  <details class="panel" data-k="reach" open>
+    <summary><span>👥 各社團人數</span><span class="sum">已發佈＋待審核合計 <b id="memTotal">0</b> 人</span></summary>
+    <div class="pbody">
+      <div class="keys"><span><i style="background:#12805c"></i>已發佈</span><span><i style="background:#2f5fd0"></i>待審核</span><span><i style="background:#d9921b"></i>等入社</span><span><i style="background:#c3c8d0"></i>跳過</span></div>
+      <div id="memChart"></div>
+      <div class="more"><button class="btn" id="memMore"></button></div>
+    </div>
+  </details>
+
+  <details class="panel" data-k="clicks" open>
+    <summary><span>🔗 報名頁點擊（依來源社團）</span><span class="sum">總計 <b id="clkTotal">0</b> 次</span></summary>
+    <div class="pbody">
+      <div id="clkList">載入中…</div>
+      <div class="note" style="font-size:12px;margin-top:10px">同一人同一瀏覽分頁只算一次；測試資料已排除。每分鐘自動更新。</div>
+    </div>
+  </details>
+
+  <details class="panel" data-k="days" open>
+    <summary><span>🗓 每日進度</span><span class="sum" id="sumDays">點日期可篩選下方明細</span></summary>
+    <div class="pbody"><div class="days" id="days"></div></div>
+  </details>
+
+  <details class="panel" data-k="detail" open>
+    <summary><span>📋 社團明細</span><span class="sum" id="sumDetail"></span></summary>
+    <div class="pbody">
   <div class="tools">
     <span class="chip on" data-st="all">全部</span>
     <span class="chip" data-st="已發佈">已發佈</span>
@@ -91,6 +145,8 @@
       <tbody id="rows"></tbody>
     </table>
   </div>
+    </div>
+  </details>
 
   <h2>怎麼更新</h2>
   <div class="how">
@@ -170,15 +226,53 @@ function latest(){
   return [...m.values()];
 }
 const MEM = ()=>{const m={};DATA.entries.forEach(e=>{if(e.m)m[e.g]=e.m;});return m;};
+const COL={"已發佈":"#12805c","待審核":"#2f5fd0","等入社":"#d9921b","跳過":"#c3c8d0"};
+let memAll=false;
+function donut(parts,big,small){
+  const tot=parts.reduce((a,p)=>a+p.v,0)||1; let off=25;
+  const segs=parts.filter(p=>p.v>0).map(p=>{const len=p.v/tot*100;const t=`<circle cx="21" cy="21" r="15.9155" fill="none" stroke="${p.c}" stroke-width="5" stroke-dasharray="${len} ${100-len}" stroke-dashoffset="${off}"><title>${esc(p.l)}：${p.v.toLocaleString()}</title></circle>`;off-=len;return t;}).join("");
+  return `<svg viewBox="0 0 42 42" width="150" height="150" role="img"><circle cx="21" cy="21" r="15.9155" fill="none" stroke="#eef0f3" stroke-width="5"/>${segs}<text x="21" y="21.8" text-anchor="middle" font-size="6.2" font-weight="700" fill="#1d2430">${big}</text><text x="21" y="27" text-anchor="middle" font-size="2.7" fill="#667085">${small}</text></svg>`;
+}
+function legend(parts){
+  const tot=parts.reduce((a,p)=>a+p.v,0)||1;
+  return parts.map(p=>`<li><i style="background:${p.c}"></i>${esc(p.l)}<span class="lv">${p.v.toLocaleString()}</span><span class="lp">${Math.round(p.v/tot*100)}%</span></li>`).join("");
+}
+function renderDonuts(){
+  const L=latest(), mm=MEM(), cnt={}, reach={};
+  ["已發佈","待審核","等入社","跳過"].forEach(k=>{cnt[k]=0;reach[k]=0;});
+  L.forEach(e=>{cnt[e.st]++; reach[e.st]+=mm[e.g]||0;});
+  const P1=["已發佈","待審核","等入社","跳過"].map(k=>({l:k==="待審核"?"待管理員審核":k==="等入社"?"等入社批准":k==="跳過"?"跳過／無法分享":k,v:cnt[k],c:COL[k]}));
+  const P2=["已發佈","待審核","等入社"].map(k=>({l:k==="待審核"?"待管理員審核":k==="等入社"?"等入社批准":k,v:reach[k],c:COL[k]}));
+  const rt=P2.reduce((a,p)=>a+p.v,0);
+  document.getElementById("donutSt").innerHTML=donut(P1,L.length,"追蹤中社團");
+  document.getElementById("lgSt").innerHTML=legend(P1);
+  document.getElementById("donutReach").innerHTML=donut(P2,rt>=10000?(rt/10000).toFixed(1)+" 萬":rt.toLocaleString(),"可觸及人數");
+  document.getElementById("lgReach").innerHTML=legend(P2);
+  document.getElementById("sumOverview").innerHTML=`<b>${L.length}</b> 個社團・已發佈 <b>${cnt["已發佈"]}</b>・可觸及 <b>${rt.toLocaleString()}</b> 人`;
+  document.getElementById("sumDetail").textContent=`共 ${DATA.entries.length} 筆紀錄`;
+  const nd=new Set(DATA.entries.map(e=>e.d)).size;
+  document.getElementById("sumDays").textContent=`${nd} 天・點日期可篩選下方明細`;
+}
 function renderMemChart(){
   const el=document.getElementById("memChart"); if(!el) return;
   const mm=MEM(), L=latest().filter(e=>mm[e.g]).map(e=>({g:e.g,m:mm[e.g],st:e.st}));
   L.sort((a,b)=>b.m-a.m); const max=L.length?L[0].m:1;
-  const col={"已發佈":"var(--ok)","待審核":"var(--pend)","等入社":"var(--wait)","跳過":"#c3c8d0"};
-  el.innerHTML=L.map(e=>`<div style="display:flex;align-items:center;gap:8px;margin:3px 0;font-size:12px"><div style="width:210px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis" title="${esc(e.g)}">${esc(e.g)}</div><div style="flex:1;background:var(--skip-bg);border-radius:4px;height:14px"><div style="width:${Math.max(e.m/max*100,0.6)}%;height:100%;background:${col[e.st]};border-radius:4px"></div></div><div style="width:64px;text-align:right">${e.m.toLocaleString()}</div></div>`).join("");
+  const show=memAll?L:L.slice(0,10);
+  el.innerHTML=show.map((e,i)=>`<div class="brow"><div class="rk">${i+1}</div><div class="nm" title="${esc(e.g)}">${esc(e.g)}</div><div class="tr"><i style="width:${Math.max(e.m/max*100,0.8)}%;background:${COL[e.st]||"#c3c8d0"}"></i></div><div class="vl">${e.m.toLocaleString()}</div></div>`).join("");
+  const btn=document.getElementById("memMore");
+  if(L.length<=10){btn.style.display="none";} else {btn.style.display="";btn.textContent=memAll?"只顯示前 10 名":`顯示全部 ${L.length} 個社團`;}
   const tot=L.filter(e=>e.st==="已發佈"||e.st==="待審核").reduce((a,e)=>a+e.m,0);
   document.getElementById("memTotal").textContent=tot.toLocaleString();
 }
+function renderCharts(){ renderMemChart(); renderDonuts(); }
+document.getElementById("memMore").onclick=()=>{memAll=!memAll;renderMemChart();};
+/* 面板收合：記住使用者的選擇 */
+document.querySelectorAll("details.panel").forEach(d=>{
+  try{const v=localStorage.getItem("trk_"+d.dataset.k); if(v==="0") d.open=false;}catch(e){}
+  d.addEventListener("toggle",()=>{try{localStorage.setItem("trk_"+d.dataset.k,d.open?"1":"0");}catch(e){}});
+});
+document.getElementById("expAll").onclick=()=>document.querySelectorAll("details.panel").forEach(d=>d.open=true);
+document.getElementById("colAll").onclick=()=>document.querySelectorAll("details.panel").forEach(d=>d.open=false);
 function renderCards(){
   const L = latest(), c = {"已發佈":0,"待審核":0,"等入社":0,"跳過":0};
   L.forEach(e=>c[e.st]++);
@@ -226,7 +320,7 @@ document.querySelectorAll(".chip").forEach(el=>el.onclick=()=>{
 });
 document.getElementById("q").oninput = e=>{ q = e.target.value.trim().toLowerCase(); renderRows(); };
 document.getElementById("updated").textContent = DATA.updated;
-renderCards(); renderDays(); renderRows(); renderMemChart();
+renderCards(); renderDays(); renderRows(); renderCharts();
 
 /* ===== 資料來源：Google 雲端試算表（已發布為 CSV）。在試算表加一列，這個頁面重新整理就會更新，不用改程式碼 =====
    上面 DATA.entries 只是備援（讀不到試算表時顯示）。 */
@@ -258,7 +352,7 @@ function loadSheet(){
     DATA.entries = rows;
     DATA.updated = rows.map(e=>e.d).sort().pop();
     document.getElementById("updated").textContent = DATA.updated + "（資料來自雲端試算表，每分鐘自動更新）";
-    renderCards(); renderDays(); renderRows(); renderMemChart();
+    renderCards(); renderDays(); renderRows(); renderCharts();
   }).catch(err=>console.warn("讀取試算表失敗，改用內建備援資料", err));
 }
 loadSheet();
@@ -275,7 +369,7 @@ function loadClicks(){
     document.getElementById("clkTotal").textContent=tot;
     const ks=Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a]);
     const mx=ks.length?cnt[ks[0]]:1;
-    document.getElementById("clkList").innerHTML=ks.length?ks.map(k=>`<div style="display:flex;align-items:center;gap:8px;margin:3px 0;font-size:13px"><div style="width:230px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis" title="${esc(FROM_NAME[k]||k)}">${esc(FROM_NAME[k]||k)}</div><div style="flex:1;background:var(--skip-bg);border-radius:4px;height:16px"><div style="width:${cnt[k]/mx*100}%;height:100%;background:var(--pend);border-radius:4px"></div></div><b style="width:36px;text-align:right">${cnt[k]}</b><span style="width:44px;text-align:right;color:var(--mute);font-size:12px">${Math.round(cnt[k]/tot*100)}%</span></div>`).join(""):"尚無點擊紀錄";
+    document.getElementById("clkList").innerHTML=ks.length?ks.map((k,i)=>`<div class="brow" style="grid-template-columns:22px minmax(96px,210px) 1fr 70px"><div class="rk">${i+1}</div><div class="nm" title="${esc(FROM_NAME[k]||k)}">${esc(FROM_NAME[k]||k)}</div><div class="tr"><i style="width:${cnt[k]/mx*100}%;background:${k==="direct"?"#c3c8d0":"#2f5fd0"}"></i></div><div class="vl">${cnt[k]} <span style="color:var(--mute);font-weight:400;font-size:12px">${Math.round(cnt[k]/tot*100)}%</span></div></div>`).join(""):"尚無點擊紀錄";
   }).catch(()=>{document.getElementById("clkList").textContent="暫時讀取不到點擊資料";});
 }
 loadClicks(); setInterval(loadClicks,60000);
