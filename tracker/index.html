@@ -251,7 +251,7 @@ document.addEventListener("visibilitychange",()=>{ if(!document.hidden) loadShee
 
 /* ===== 點擊追蹤：Google 表單記錄 → 回覆試算表（已發布 CSV）。連結格式 …/camp2027/?from=<代碼> ===== */
 const CLICK_CSV="https://docs.google.com/spreadsheets/d/e/2PACX-1vTttzzIITW184S5m41WMZ-emwOpPpkJRhhASmApAK5SWP8lEhkpQy0C9V-k_XSMRKc5XK8qbgnyNH7l/pub?gid=669604275&single=true&output=csv";
-const FROM_NAME={assoc:"新竹市無人機創新科技協會",kid:"兒童營隊＆親子遊學站",mom:"孩子與爸媽的夏令營…",act:"課程活動分享",direct:"直接開啟／短網址（未標來源）"};
+const FROM_NAME={assoc:"新竹市無人機創新科技協會",kid:"兒童營隊＆親子遊學站",mom:"孩子與爸媽的夏令營…",act:"課程活動分享",direct:"直接開啟／短網址（未標來源）",hkb:"新竹縣市好康報報",coedu:"新竹(小學階段)共學相關訊息分享",multi:"多元智能兒童夏冬令營",goodcourse:"好課。好活動。蒐集。共享。",local:"新竹在地社團 免費店家廣告",nanliao:"新竹南寮人聊天大小事",twcamp:"台灣夏令營冬令營課程推薦",hcpeople:"新竹人新竹事",xiake:"下課啦！新竹孩子玩什麼？",qzact:"親子活動課程推薦-經驗&交流分享區",bigsh:"大新竹.桃園.苗栗…親子交流平台",legal:"新竹合法親子活動與課程",talent:"全台才藝課程、藝文訊息分享平台",seasoncamp:"全台快樂寒暑期.短期營隊介紹團",kidedu:"兒童文教資訊",tongban:"童伴 親子共學共玩",age312:"3-12歲親子活動/講座/教材/各種學習課程",zhubei:"新竹 竹北好學堂",hcsport:"新竹兒童運動同好課程交流"};
 function loadClicks(){
   fetch(CLICK_CSV+"&t="+Date.now(),{cache:"no-store"}).then(r=>r.text()).then(txt=>{
     const cnt={}; let tot=0;
