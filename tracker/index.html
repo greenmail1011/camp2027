@@ -147,11 +147,11 @@
     <div class="pbody">
       <div class="insight" id="memInsight"></div>
       <div class="mtools">
-        <span class="chip on" data-ms="reach">可觸及（不含跳過）</span><span class="chip" data-ms="已發佈">已發佈</span><span class="chip" data-ms="待審核">待審核</span><span class="chip" data-ms="等入社">等入社</span><span class="chip" data-ms="跳過">跳過</span><span class="chip" data-ms="all">全部</span>
+        <span class="chip on" data-ms="reach">全部</span><span class="chip" data-ms="已發佈">已發佈</span><span class="chip" data-ms="待審核">待審核</span><span class="chip" data-ms="等入社">等入社</span>
         <span class="sp"></span>
         <span class="chip" id="memLog" title="人數差距很大時，用對數刻度讓小社團也看得清楚">對數刻度</span>
       </div>
-      <div class="keys"><span><i style="background:#12805c"></i>已發佈</span><span><i style="background:#2f5fd0"></i>待審核</span><span><i style="background:#d9921b"></i>等入社</span><span><i style="background:#c3c8d0"></i>跳過</span></div>
+      <div class="keys"><span><i style="background:#12805c"></i>已發佈</span><span><i style="background:#2f5fd0"></i>待審核</span><span><i style="background:#d9921b"></i>等入社</span></div>
       <div id="memAxis"></div>
       <div id="memChart"></div>
       <div class="more"><button class="btn" id="memMore"></button></div>
@@ -180,7 +180,6 @@
     <span class="chip" data-st="已發佈">已發佈</span>
     <span class="chip" data-st="待審核">待管理員審核</span>
     <span class="chip" data-st="等入社">等入社批准</span>
-    <span class="chip" data-st="跳過">跳過／無法分享</span>
     <input type="search" id="q" placeholder="搜尋社團名稱或備註">
   </div>
   <div class="tablewrap">
@@ -200,7 +199,7 @@
     同一個社團之後狀態變了（例如待審核→已發佈），就再加一行新日期，頁面以最新一筆為準，舊紀錄保留在每日進度裡。
   </div>
 </main>
-<footer>只記錄分享狀態，不含任何報名者個資。</footer>
+<footer>只記錄分享狀態，不含任何報名者個資。已確認不適合或無法分享的社團已排除，不顯示也不再嘗試。</footer>
 
 <script>
 /* ===== 資料區：每天在這裡加幾行就好 ===== */
@@ -261,6 +260,13 @@ const CLS = {"已發佈":"ok","待審核":"pend","等入社":"wait","跳過":"sk
 const LABEL = {"已發佈":"已發佈","待審核":"待管理員審核","等入社":"等入社批准","跳過":"跳過／無法"};
 const esc = s => String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 
+// 已排除社團：最新狀態是「跳過／無法」的，整個社團不顯示、不再嘗試
+function dropSkipped(rows){
+  const last=new Map();
+  rows.forEach(e=>{const o=last.get(e.g); if(!o||o.d<=e.d) last.set(e.g,e);});
+  return rows.filter(e=>last.get(e.g).st!=="跳過");
+}
+DATA.entries = dropSkipped(DATA.entries);
 let selDay = null, selSt = "all", q = "";
 
 // 每個社團取「最新一筆」代表目前狀態
@@ -285,7 +291,7 @@ function renderDonuts(){
   const L=latest(), mm=MEM(), cnt={}, reach={};
   ["已發佈","待審核","等入社","跳過"].forEach(k=>{cnt[k]=0;reach[k]=0;});
   L.forEach(e=>{cnt[e.st]++; reach[e.st]+=mm[e.g]||0;});
-  const P1=["已發佈","待審核","等入社","跳過"].map(k=>({l:k==="待審核"?"待管理員審核":k==="等入社"?"等入社批准":k==="跳過"?"跳過／無法分享":k,v:cnt[k],c:COL[k]}));
+  const P1=["已發佈","待審核","等入社"].map(k=>({l:k==="待審核"?"待管理員審核":k==="等入社"?"等入社批准":k,v:cnt[k],c:COL[k]}));
   const P2=["已發佈","待審核","等入社"].map(k=>({l:k==="待審核"?"待管理員審核":k==="等入社"?"等入社批准":k,v:reach[k],c:COL[k]}));
   const rt=P2.reduce((a,p)=>a+p.v,0);
   document.getElementById("donutSt").innerHTML=donut(P1,L.length,"追蹤中社團");
@@ -347,8 +353,7 @@ function renderCards(){
     ["", L.length, "追蹤中社團"],
     ["ok", c["已發佈"], "已發佈"],
     ["pend", c["待審核"], "待管理員審核"],
-    ["wait", c["等入社"], "等入社批准"],
-    ["skip", c["跳過"], "跳過／無法分享"]
+    ["wait", c["等入社"], "等入社批准"]
   ];
   document.getElementById("cards").innerHTML = items.map(x=>`<div class="stat ${x[0]}"><b>${x[1]}</b><span>${x[2]}</span></div>`).join("");
 }
@@ -361,8 +366,8 @@ function renderDays(){
     const seg = (n,col)=>n?`<i style="width:${n/t*100}%;background:${col}"></i>`:"";
     return `<div class="day ${selDay===d?'on':''}" data-d="${d}">
       <h3>${d}</h3>
-      <div class="bar">${seg(c["已發佈"],"var(--ok)")}${seg(c["待審核"],"var(--pend)")}${seg(c["等入社"],"var(--wait)")}${seg(c["跳過"],"#c3c8d0")}</div>
-      <small>共 ${t} 筆｜發佈 ${c["已發佈"]}・審核 ${c["待審核"]}・等入社 ${c["等入社"]}・跳過 ${c["跳過"]}</small>
+      <div class="bar">${seg(c["已發佈"],"var(--ok)")}${seg(c["待審核"],"var(--pend)")}${seg(c["等入社"],"var(--wait)")}</div>
+      <small>共 ${t} 筆｜發佈 ${c["已發佈"]}・審核 ${c["待審核"]}・等入社 ${c["等入社"]}</small>
     </div>`;
   }).join("");
   document.querySelectorAll(".day").forEach(el=>el.onclick=()=>{ selDay = selDay===el.dataset.d?null:el.dataset.d; renderDays(); renderRows(); });
@@ -416,7 +421,7 @@ function loadSheet(){
     lastTxt = txt;
     const rows=parseCSV(txt).slice(1).map(c=>({d:normDate(c[0]),g:(c[1]||"").trim(),src:(c[2]||"").trim(),st:(c[3]||"").trim(),n:(c[4]||"").trim(),m:parseInt(String(c[5]||"").replace(/[^0-9]/g,""))||0})).filter(e=>e.d&&e.g&&CLS[e.st]);
     if(!rows.length) return;
-    DATA.entries = rows;
+    DATA.entries = dropSkipped(rows);
     DATA.updated = rows.map(e=>e.d).sort().pop();
     document.getElementById("updated").textContent = DATA.updated + "（資料來自雲端試算表，每分鐘自動更新）";
     renderCards(); renderDays(); renderRows(); renderCharts();
