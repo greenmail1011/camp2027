@@ -63,6 +63,11 @@
 <main>
   <div class="cards" id="cards"></div>
 
+  <h2>各社團人數（顏色＝目前狀態；綠＝已發佈、藍＝待審核、灰＝跳過）</h2>
+  <div style="margin:8px 0 16px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:#fff">
+    <div style="font-weight:700;margin-bottom:6px">已發佈＋待審核社團可觸及人數合計（不去重）：<span id="memTotal">0</span></div>
+    <div id="memChart"></div>
+  </div>
   <h2>每日進度（點日期可篩選）</h2>
   <div id="clicksBox" style="margin:16px 0;padding:12px 14px;border:1px solid #ddd;border-radius:10px;background:#fff">
     <div style="font-weight:700;margin-bottom:6px">報名頁點擊（依來源社團）　總計：<span id="clkTotal">0</span> 次</div>
@@ -82,7 +87,7 @@
   </div>
   <div class="tablewrap">
     <table>
-      <thead><tr><th>日期</th><th>社團</th><th>名單</th><th>狀態</th><th>備註</th></tr></thead>
+      <thead><tr><th>日期</th><th>社團</th><th>名單</th><th>狀態</th><th>人數</th><th>備註</th></tr></thead>
       <tbody id="rows"></tbody>
     </table>
   </div>
@@ -164,6 +169,16 @@ function latest(){
   DATA.entries.forEach((e,i)=>{ const k=e.g; if(!m.has(k) || m.get(k).d <= e.d) m.set(k,{...e,i}); });
   return [...m.values()];
 }
+const MEM = ()=>{const m={};DATA.entries.forEach(e=>{if(e.m)m[e.g]=e.m;});return m;};
+function renderMemChart(){
+  const el=document.getElementById("memChart"); if(!el) return;
+  const mm=MEM(), L=latest().filter(e=>mm[e.g]).map(e=>({g:e.g,m:mm[e.g],st:e.st}));
+  L.sort((a,b)=>b.m-a.m); const max=L.length?L[0].m:1;
+  const col={"已發佈":"var(--ok)","待審核":"var(--pend)","等入社":"var(--wait)","跳過":"#c3c8d0"};
+  el.innerHTML=L.map(e=>`<div style="display:flex;align-items:center;gap:8px;margin:3px 0;font-size:12px"><div style="width:210px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis" title="${esc(e.g)}">${esc(e.g)}</div><div style="flex:1;background:var(--skip-bg);border-radius:4px;height:14px"><div style="width:${Math.max(e.m/max*100,0.6)}%;height:100%;background:${col[e.st]};border-radius:4px"></div></div><div style="width:64px;text-align:right">${e.m.toLocaleString()}</div></div>`).join("");
+  const tot=L.filter(e=>e.st==="已發佈"||e.st==="待審核").reduce((a,e)=>a+e.m,0);
+  document.getElementById("memTotal").textContent=tot.toLocaleString();
+}
 function renderCards(){
   const L = latest(), c = {"已發佈":0,"待審核":0,"等入社":0,"跳過":0};
   L.forEach(e=>c[e.st]++);
@@ -202,7 +217,8 @@ function renderRows(){
     <td>${esc(e.g)}</td>
     <td class="src">${esc(e.src)}</td>
     <td><span class="tag ${CLS[e.st]||'skip'}">${esc(LABEL[e.st]||e.st)}</span></td>
-    <td class="note">${esc(e.n)}</td></tr>`).join("") : `<tr><td colspan="5" class="note">沒有符合的紀錄</td></tr>`;
+    <td class="src">${e.m?e.m.toLocaleString():"—"}</td>
+    <td class="note">${esc(e.n)}</td></tr>`).join("") : `<tr><td colspan="6" class="note">沒有符合的紀錄</td></tr>`;
 }
 document.querySelectorAll(".chip").forEach(el=>el.onclick=()=>{
   document.querySelectorAll(".chip").forEach(x=>x.classList.remove("on")); el.classList.add("on");
@@ -210,7 +226,7 @@ document.querySelectorAll(".chip").forEach(el=>el.onclick=()=>{
 });
 document.getElementById("q").oninput = e=>{ q = e.target.value.trim().toLowerCase(); renderRows(); };
 document.getElementById("updated").textContent = DATA.updated;
-renderCards(); renderDays(); renderRows();
+renderCards(); renderDays(); renderRows(); renderMemChart();
 
 /* ===== 資料來源：Google 雲端試算表（已發布為 CSV）。在試算表加一列，這個頁面重新整理就會更新，不用改程式碼 =====
    上面 DATA.entries 只是備援（讀不到試算表時顯示）。 */
@@ -237,12 +253,12 @@ function loadSheet(){
   fetch(SHEET_CSV+"&t="+Date.now(),{cache:"no-store"}).then(r=>{ if(!r.ok) throw new Error(r.status); return r.text(); }).then(txt=>{
     if(txt===lastTxt) return;           // 試算表沒變就不重畫
     lastTxt = txt;
-    const rows=parseCSV(txt).slice(1).map(c=>({d:normDate(c[0]),g:(c[1]||"").trim(),src:(c[2]||"").trim(),st:(c[3]||"").trim(),n:(c[4]||"").trim()})).filter(e=>e.d&&e.g&&CLS[e.st]);
+    const rows=parseCSV(txt).slice(1).map(c=>({d:normDate(c[0]),g:(c[1]||"").trim(),src:(c[2]||"").trim(),st:(c[3]||"").trim(),n:(c[4]||"").trim(),m:parseInt(String(c[5]||"").replace(/[^0-9]/g,""))||0})).filter(e=>e.d&&e.g&&CLS[e.st]);
     if(!rows.length) return;
     DATA.entries = rows;
     DATA.updated = rows.map(e=>e.d).sort().pop();
     document.getElementById("updated").textContent = DATA.updated + "（資料來自雲端試算表，每分鐘自動更新）";
-    renderCards(); renderDays(); renderRows();
+    renderCards(); renderDays(); renderRows(); renderMemChart();
   }).catch(err=>console.warn("讀取試算表失敗，改用內建備援資料", err));
 }
 loadSheet();
@@ -258,7 +274,8 @@ function loadClicks(){
     parseCSV(txt).slice(1).forEach(c=>{const f=(c[1]||"").trim(); if(!f||f==="test") return; cnt[f]=(cnt[f]||0)+1; tot++;});
     document.getElementById("clkTotal").textContent=tot;
     const ks=Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a]);
-    document.getElementById("clkList").innerHTML=ks.length?ks.map(k=>esc(FROM_NAME[k]||k)+"：<b>"+cnt[k]+"</b>").join("<br>"):"尚無點擊紀錄";
+    const mx=ks.length?cnt[ks[0]]:1;
+    document.getElementById("clkList").innerHTML=ks.length?ks.map(k=>`<div style="display:flex;align-items:center;gap:8px;margin:3px 0;font-size:13px"><div style="width:230px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis" title="${esc(FROM_NAME[k]||k)}">${esc(FROM_NAME[k]||k)}</div><div style="flex:1;background:var(--skip-bg);border-radius:4px;height:16px"><div style="width:${cnt[k]/mx*100}%;height:100%;background:var(--pend);border-radius:4px"></div></div><b style="width:36px;text-align:right">${cnt[k]}</b><span style="width:44px;text-align:right;color:var(--mute);font-size:12px">${Math.round(cnt[k]/tot*100)}%</span></div>`).join(""):"尚無點擊紀錄";
   }).catch(()=>{document.getElementById("clkList").textContent="暫時讀取不到點擊資料";});
 }
 loadClicks(); setInterval(loadClicks,60000);
