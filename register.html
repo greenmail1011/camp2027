@@ -234,10 +234,6 @@ footer{color:var(--muted);font-size:14px;text-align:center;border-top:1px solid 
           <input type="text" id="birth" name="birth" inputmode="numeric" maxlength="7" placeholder="例：1000120" required>
           <small>民國年＋月＋日，營隊團體保險使用</small>
           <span class="err">請填 6～7 位數字，例：1000120</span></div>
-        <div class="field"><label for="idno">身分證字號<span class="star">*</span></label>
-          <input type="text" id="idno" name="idno" autocomplete="off" maxlength="10" placeholder="例：A123456789" style="text-transform:uppercase" required>
-          <small>營隊團體保險使用</small>
-          <span class="err">格式為 1 個英文字母＋9 位數字</span></div>
         <div class="field"><span class="lbl" id="l-gender">性別<span class="star">*</span></span>
           <div class="seg" role="radiogroup" aria-labelledby="l-gender">
             <label><input type="radio" name="gender" value="男">男</label>
@@ -426,6 +422,23 @@ footer{color:var(--muted);font-size:14px;text-align:center;border-top:1px solid 
   const DRAFT_KEY = "camp2027-reg-draft";
   // ==================
 
+  // ---- 報名漏斗追蹤（每個分頁每個事件只記一次；dryrun 一律記為 test）----
+  const TRK_URL = "https://docs.google.com/forms/d/e/1FAIpQLSeCaUVEcCAjdi96-oPV4QfH2BUyNmSRBcvWA2y3Kgb7nskVPA/formResponse";
+  const TRK_FROM = (()=>{ try{
+    const q = new URLSearchParams(location.search);
+    if (q.has("dryrun")) return "test";
+    const f = q.get("from") || sessionStorage.getItem("camp_from") || "direct";
+    sessionStorage.setItem("camp_from", f); return f;
+  }catch(e){ return "direct"; } })();
+  let trkReady = false; // 載入草稿時先不記步驟，避免把舊草稿算成剛完成
+  function trk(ev){
+    try{
+      const k = "rtrk_" + ev; if (sessionStorage.getItem(k)) return; sessionStorage.setItem(k, "1");
+      const d = new URLSearchParams(); d.append("entry.248685805", TRK_FROM); d.append("entry.1755445244", ev);
+      fetch(TRK_URL, {method:"POST", mode:"no-cors", body:d, keepalive:true});
+    }catch(e){}
+  }
+
   const $ = s => document.querySelector(s);
   const form = $("#reg");
   const money = n => "$" + n.toLocaleString("en-US");
@@ -454,7 +467,6 @@ footer{color:var(--muted);font-size:14px;text-align:center;border-top:1px solid 
   const rules = {
     name:   () => !!val("name"),
     birth:  () => /^\d{6,7}$/.test(val("birth")),
-    idno:   () => /^[A-Za-z][1289]\d{8}$/.test(val("idno")),
     gender: () => !!val("gender"),
     school: () => !!val("school"),
     grade:  () => val("grade") && (val("grade") !== "__other" || !!val("gradeOther")),
@@ -468,7 +480,7 @@ footer{color:var(--muted);font-size:14px;text-align:center;border-top:1px solid 
     joined: () => val("joined") === true
   };
   const fieldOf = {
-    name:"#name", birth:"#birth", idno:"#idno", gender:'[name=gender]', school:"#school", grade:"#grade",
+    name:"#name", birth:"#birth", gender:'[name=gender]', school:"#school", grade:"#grade",
     parent:"#parent", phone:"#phone", ident:"#f-ident", group:"#f-group", file:"#f-file", lunch:"#f-lunch",
     last5:"#last5", joined:"#joined"
   };
@@ -478,7 +490,7 @@ footer{color:var(--muted);font-size:14px;text-align:center;border-top:1px solid 
     if (!force && !touched.has(k)) return;
     const box = fieldBox(k); if (box) box.classList.toggle("bad", !rules[k]());
   }
-  const stepKeys = { s1:["name","birth","idno","gender","school","grade"], s2:["parent","phone"], s3:["ident","group","file"], s4:["lunch"], s5:["last5"], s6:["joined"] };
+  const stepKeys = { s1:["name","birth","gender","school","grade"], s2:["parent","phone"], s3:["ident","group","file"], s4:["lunch"], s5:["last5"], s6:["joined"] };
 
   function update(){
     const o = IDS.find(x=>x.k===val("ident"));
@@ -503,6 +515,7 @@ footer{color:var(--muted);font-size:14px;text-align:center;border-top:1px solid 
 
     Object.entries(stepKeys).forEach(([s,keys])=>{
       const ok = keys.every(k=>rules[k]());
+      if (ok && trkReady) trk("reg_" + s);
       $("#"+s).classList.toggle("done", ok);
       const req = $("#"+s+" [data-req]");
       if (req){ if (!req.dataset.orig) req.dataset.orig = req.textContent; req.textContent = ok ? "已完成" : req.dataset.orig; }
@@ -610,7 +623,9 @@ footer{color:var(--muted);font-size:14px;text-align:center;border-top:1px solid 
     update();
     const firstBad = Object.keys(rules).find(k=>!rules[k]());
     const alert = $("#alert");
+    trk("reg_try");
     if (firstBad) {
+      trk("reg_bad_" + firstBad);
       alert.textContent = "還有資料未完成，請檢查標示紅色的欄位。"; alert.dataset.kind = "invalid"; alert.hidden = false;
       const box = fieldBox(firstBad); if (box) { box.scrollIntoView({block:"center"}); const inp = box.querySelector("input,select,textarea"); inp && inp.focus({preventScroll:true}); }
       return;
@@ -619,7 +634,7 @@ footer{color:var(--muted);font-size:14px;text-align:center;border-top:1px solid 
     const btn = $("#submit"); btn.disabled = true; btn.textContent = "送出中，請稍候…";
     const payload = {
       website: form.elements.website.value,
-      name: val("name"), birth: val("birth"), idno: val("idno").toUpperCase(), gender: val("gender"),
+      name: val("name"), birth: val("birth"), idno: "未提供" /* 網頁已不收身分證；目前後端仍要求此欄非空 */, gender: val("gender"),
       school: val("school"), grade: val("grade") === "__other" ? val("gradeOther") : val("grade"),
       parent: val("parent"), phone: val("phone"),
       ident: val("ident"), group: val("ident") === "group" ? val("group") : "",
@@ -633,8 +648,10 @@ footer{color:var(--muted);font-size:14px;text-align:center;border-top:1px solid 
       clearTimeout(timer);
       const res = await r.json();
       if (!res.ok) throw new Error(res.error || "送出失敗");
+      trk("reg_ok");
       showDone(res.amount);
     } catch(ex) {
+      trk("reg_err");
       alert.dataset.kind = "error";
       alert.innerHTML = esc(ex.name === "AbortError" ? "連線逾時，請稍後再試。" : (ex.message || "送出失敗，請稍後再試。")) +
         '<br>若一直無法送出，請來電 <span class="num">(03)540-3463</span>，或改用 <a href="'+FALLBACK_FORM+'" target="_blank" rel="noopener">Google 報名表</a>。';
@@ -652,6 +669,8 @@ footer{color:var(--muted);font-size:14px;text-align:center;border-top:1px solid 
 
   loadDraft();
   update();
+  trk("reg");
+  trkReady = true;
 })();
 </script>
 <script>

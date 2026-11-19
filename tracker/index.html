@@ -167,6 +167,15 @@
     </div>
   </details>
 
+  <details class="panel" data-k="funnel" open>
+    <summary><span>🧭 報名漏斗（大家停在哪一步）</span><span class="sum">報名成功 <b id="fnOk">0</b> 筆</span></summary>
+    <div class="pbody">
+      <div id="fnList">載入中…</div>
+      <div id="fnBad" style="margin-top:12px"></div>
+      <div class="note" style="font-size:12px;margin-top:10px">每個瀏覽分頁每一步只算一次；測試（dryrun／from=test）已排除。11/19 起才開始記錄報名頁，之前的人數只有首頁。</div>
+    </div>
+  </details>
+
   <details class="panel" data-k="days" open>
     <summary><span>🗓 每日進度</span><span class="sum" id="sumDays">點日期可篩選下方明細</span></summary>
     <div class="pbody"><div class="days" id="days"></div></div>
@@ -434,10 +443,29 @@ document.addEventListener("visibilitychange",()=>{ if(!document.hidden) loadShee
 /* ===== 點擊追蹤：Google 表單記錄 → 回覆試算表（已發布 CSV）。連結格式 …/camp2027/?from=<代碼> ===== */
 const CLICK_CSV="https://docs.google.com/spreadsheets/d/e/2PACX-1vTttzzIITW184S5m41WMZ-emwOpPpkJRhhASmApAK5SWP8lEhkpQy0C9V-k_XSMRKc5XK8qbgnyNH7l/pub?gid=669604275&single=true&output=csv";
 const FROM_NAME={assoc:"新竹市無人機創新科技協會",kid:"兒童營隊＆親子遊學站",mom:"孩子與爸媽的夏令營…",act:"課程活動分享",direct:"直接開啟／短網址（未標來源）",hkb:"新竹縣市好康報報",coedu:"新竹(小學階段)共學相關訊息分享",multi:"多元智能兒童夏冬令營",goodcourse:"好課。好活動。蒐集。共享。",local:"新竹在地社團 免費店家廣告",nanliao:"新竹南寮人聊天大小事",twcamp:"台灣夏令營冬令營課程推薦",hcpeople:"新竹人新竹事",xiake:"下課啦！新竹孩子玩什麼？",qzact:"親子活動課程推薦-經驗&交流分享區",bigsh:"大新竹.桃園.苗栗…親子交流平台",legal:"新竹合法親子活動與課程",talent:"全台才藝課程、藝文訊息分享平台",seasoncamp:"全台快樂寒暑期.短期營隊介紹團",kidedu:"兒童文教資訊",tongban:"童伴 親子共學共玩",age312:"3-12歲親子活動/講座/教材/各種學習課程",zhubei:"新竹 竹北好學堂",hcsport:"新竹兒童運動同好課程交流"};
+const FN_STEPS=[["home","看了營隊首頁"],["reg","打開報名頁"],["reg_s1","① 填完學員資料"],["reg_s2","② 填完家長資料"],["reg_s3","③ 選了報名身份"],["reg_s4","④ 選了午餐"],["reg_s5","⑤ 填了匯款後 5 碼"],["reg_s6","⑥ 勾選已加入 LINE"],["reg_try","按下送出"],["reg_ok","報名成功"]];
+const FN_BAD={name:"學員姓名",birth:"出生年月日",idno:"身分證字號",gender:"性別",school:"就讀學校",grade:"年級",parent:"家長姓名",phone:"聯絡電話",ident:"報名身份",group:"團報同行學員",file:"教職員證上傳",lunch:"午餐",last5:"匯款後 5 碼",joined:"加入 LINE"};
+function renderFunnel(rows, homeTot){
+  const c={}; let err=0; const bad={};
+  rows.forEach(r=>{const f=(r[1]||"").trim(), pg=(r[2]||"home").trim(); if(!f||f==="test") return;
+    if(pg==="home") return; if(pg==="reg_err"){err++;return;}
+    if(pg.indexOf("reg_bad_")===0){const k=pg.slice(8); bad[k]=(bad[k]||0)+1; return;}
+    c[pg]=(c[pg]||0)+1;});
+  c.home=homeTot;
+  document.getElementById("fnOk").textContent=c.reg_ok||0;
+  const mx=Math.max(1,...FN_STEPS.map(x=>c[x[0]]||0));
+  document.getElementById("fnList").innerHTML=FN_STEPS.map((x,i)=>{const v=c[x[0]]||0, prev=i?(c[FN_STEPS[i-1][0]]||0):0;
+    const drop=i>1&&prev?Math.round((1-v/prev)*100):null;
+    return `<div class="brow" style="grid-template-columns:minmax(120px,190px) 1fr 110px"><div class="nm">${x[1]}</div><div class="tr"><i style="width:${v/mx*100}%;background:${x[0]==="reg_ok"?"#1f9d55":x[0]==="home"?"#c3c8d0":"#2f5fd0"}"></i></div><div class="vl">${v}${drop!==null&&drop>0?` <span style="color:#c0392b;font-weight:400;font-size:12px">流失 ${drop}%</span>`:""}</div></div>`;}).join("");
+  const bk=Object.keys(bad).sort((a,b)=>bad[b]-bad[a]);
+  document.getElementById("fnBad").innerHTML=(bk.length||err)?`<div style="font-size:13px"><b>按送出被擋下的欄位：</b>${bk.map(k=>esc(FN_BAD[k]||k)+" "+bad[k]).join("、")||"無"}${err?`；<b style="color:#c0392b">送出失敗（系統錯誤） ${err} 次</b>`:""}</div>`:"";
+}
 function loadClicks(){
   fetch(CLICK_CSV+"&t="+Date.now(),{cache:"no-store"}).then(r=>r.text()).then(txt=>{
     const cnt={}; let tot=0;
-    parseCSV(txt).slice(1).forEach(c=>{const f=(c[1]||"").trim(); if(!f||f==="test") return; cnt[f]=(cnt[f]||0)+1; tot++;});
+    const rows=parseCSV(txt).slice(1);
+    rows.forEach(c=>{const f=(c[1]||"").trim(), pg=(c[2]||"home").trim(); if(!f||f==="test"||pg!=="home") return; cnt[f]=(cnt[f]||0)+1; tot++;});
+    renderFunnel(rows, tot);
     document.getElementById("clkTotal").textContent=tot;
     CLK={}; Object.keys(cnt).forEach(k=>{if(k!=="direct") CLK[FROM_NAME[k]||k]=cnt[k];});
     const top=Object.keys(cnt).filter(k=>k!=="direct").sort((a,b)=>cnt[b]-cnt[a])[0];

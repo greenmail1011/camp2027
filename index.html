@@ -674,7 +674,8 @@ window.addEventListener("load",function(){setTimeout(function(){document.querySe
 
 <script>
 (function(){try{
-var q=new URLSearchParams(location.search),f=q.get('from')||'direct';
+var q=new URLSearchParams(location.search),f=q.get('from')||sessionStorage.getItem('camp_from')||'direct';
+sessionStorage.setItem('camp_from',f);
 var k='clk_'+f;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1');
 var d=new URLSearchParams();d.append('entry.248685805',f);d.append('entry.1755445244','home');
 fetch('https://docs.google.com/forms/d/e/1FAIpQLSeCaUVEcCAjdi96-oPV4QfH2BUyNmSRBcvWA2y3Kgb7nskVPA/formResponse',{method:'POST',mode:'no-cors',body:d});

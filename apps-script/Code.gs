@@ -88,7 +88,7 @@ function doPost(e) {
     const errs = [];
     const s = k => String(d[k] == null ? '' : d[k]).trim();
     const need = (k, label) => { if (!s(k)) errs.push(label); };
-    need('name', '學員姓名'); need('birth', '學員出生年月日'); need('idno', '學員身份證字號');
+    need('name', '學員姓名'); need('birth', '學員出生年月日');
     need('gender', '性別'); need('school', '學員就讀學校'); need('grade', '學生年級');
     need('parent', '家長姓名'); need('phone', '聯絡電話');
 
